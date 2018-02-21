@@ -128,15 +128,18 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         foreach ($order->getAllItems() as $item) {
             if (in_array($item->getSku(), $skusAdded)) continue;
 
+            $mainProduct = $item->getProduct();
+
             $skusAdded[] = $item->getSku();
-			$itemPrice = (float)($item->getPrice()) ? $item->getPrice() : $item->getProduct()->getFinalPrice();
+			$itemPrice = (float)($item->getPrice()) ? $item->getPrice() : $mainProduct->getFinalPrice();
             $dataItem = array(
                 'id'        => (string)$item->getProductId(),
                 'price'     => (float)$itemPrice,
                 'name'      => (string)$item->getName(),
-                'url'       => (string)$item->getProduct()->getProductUrl(),
+                'url'       => (string)$mainProduct->getProductUrl(),
                 'quantity'  => (int)$item->getQtyOrdered()
             );
+
             if ($item->getProductType() == 'configurable' || $item->getProductType() == 'grouped') {
                 if ($item->getProductType() == 'grouped') {
                     $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($item->getProductId());
@@ -152,6 +155,11 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
                 $dataItem['option_name'] = trim(str_replace("-", " ", $item->getName()));
                 $dataItem['option_price'] = (float)$item->getPrice();
             }
+
+            if ($mainProduct->getImage()) {
+                $dataItem['image_url'] = (string)Mage::helper('catalog/image')->init($mainProduct, 'image');
+            }
+
             $data['items'][] = $dataItem;
         }
 
