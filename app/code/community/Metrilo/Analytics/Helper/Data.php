@@ -10,6 +10,27 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
     private $push_domain = 'http://p.metrilo.com';
 
     /**
+     * Checks if the api key and secret are valid
+     *
+     * @return boolean
+     */
+    public function checkCredentials($key, $secret)
+    {
+        $type = 'integrated';
+
+        $data = array(
+            'type' => $type,
+            'signature' => md5($key . $type . $secret)
+        );
+
+        $url = $this->push_domain.'/tracking/' . $key . '/activity';
+
+        $responseCode = Mage::helper('metrilo_analytics/requestclient')->post($url, $data)['code'];
+
+        return $responseCode == 200;
+    }
+
+    /**
      * Get session instance
      *
      * @return Mage_Core_Model_Session

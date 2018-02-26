@@ -222,6 +222,24 @@ class Metrilo_Analytics_Model_Observer
     }
 
     /**
+     * Tracks changes to the plugin configuration
+     *
+     * @param  Varien_Event_Observer $observer
+     * @return void
+     */
+    public function saveConfig(Varien_Event_Observer $observer)
+    {
+        $helper = Mage::helper('metrilo_analytics');
+        $storeId = $helper->getStoreId(Mage::app()->getRequest());
+        $key = Mage::getStoreConfig('metrilo_analytics_settings/settings/api_key', $storeId);
+        $secret = Mage::getStoreConfig('metrilo_analytics_settings/settings/api_secret', $storeId);
+
+        if (!$helper->checkCredentials($key, $secret)) {
+            Mage::throwException('The API Token and/or API Secret you have entered are invalid. You can find the correct ones in Settings -> Installation in your Metrilo account.');
+        }
+    }
+
+    /**
      * Send order information after save
      *
      * @param  Varien_Event_Observer $observer

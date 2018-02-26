@@ -87,6 +87,16 @@
                     </update_order>
                 </observers>
             </sales_order_save_after>
+
+            <admin_system_config_changed_section_metrilo_analytics_settings>
+                <observers>
+                    <modulename>
+                        <type>singleton</type>
+                        <class>Metrilo_Analytics_Model_Observer</class>
+                        <method>saveConfig</method>
+                    </modulename>
+                </observers>
+            </admin_system_config_changed_section_metrilo_analytics_settings>
         </events>
         <models>
             <metrilo_analytics>
