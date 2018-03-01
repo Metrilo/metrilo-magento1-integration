@@ -1,5 +1,5 @@
 web:
-  image: alexcheng/magento
+  image: metrilo.azurecr.io/magento1:latest
   ports:
     - "80:80"
   links:
