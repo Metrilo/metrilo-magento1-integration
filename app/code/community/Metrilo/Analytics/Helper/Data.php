@@ -7,7 +7,7 @@
 class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
 {
     public $js_domain = 't.metrilo.com';
-    private $push_domain = 'p.metrilo.com';
+    private $push_domain = 'http://p.metrilo.com';
 
     /**
      * Get session instance
@@ -200,7 +200,7 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
 
         /** @var Metrilo_Analytics_Helper_Asynchttpclient $asyncHttpHelper */
         $asyncHttpHelper = Mage::helper('metrilo_analytics/asynchttpclient');
-        $asyncHttpHelper->post('http://'.$this->push_domain.'/bt', $requestBody, $async);
+        $asyncHttpHelper->post($this->push_domain.'/bt', $requestBody, $async);
     }
 
     /**

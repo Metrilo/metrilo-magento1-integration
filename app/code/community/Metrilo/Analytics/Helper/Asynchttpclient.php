@@ -64,6 +64,11 @@ class Metrilo_Analytics_Helper_Asynchttpclient extends Mage_Core_Helper_Abstract
 
     private function _executeRequest($parsedUrl, $raw, $async = true)
     {
+        if ($parsedUrl['scheme'] == 'https') {
+            $parsedUrl['port'] = 443;
+            $parsedUrl['host'] = 'ssl://'.$parsedUrl['host'];
+        }
+
         $fp = fsockopen($parsedUrl['host'],
                         isset($parsedUrl['port']) ? $parsedUrl['port'] : 80,
                         $errno, $errstr, 30);
