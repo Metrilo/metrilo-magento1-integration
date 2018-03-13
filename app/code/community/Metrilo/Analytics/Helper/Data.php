@@ -14,9 +14,10 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return boolean
      */
-    public function checkCredentials($key, $secret)
+    public function createActivity($storeId, $type)
     {
-        $type = 'integrated';
+        $key = $this->getApiToken($storeId);
+        $secret = $this->getApiSecret($storeId);
 
         $data = array(
             'type' => $type,
