@@ -7,24 +7,29 @@
         jQuery.noConflict();
 
         function import_metrilo() {
-            var store_id     = <?php echo $storeId; ?>;
-            var total_chunks = <?php echo $import->getChunks($storeId); ?>;
-            var chunk_percentage = 100;
-            if(total_chunks > 0){
-                var chunk_percentage = (100 / total_chunks);
+            var storeId     = <?php echo $storeId; ?>;
+            var totalChunks = <?php echo $import->getChunks($storeId); ?>;
+            var chunkPercentage = 100;
+            if(totalChunks > 0){
+                var chunkPercentage = (100 / totalChunks);
             }
             // Update button state and text
             jQuery('#metrilo_button').addClass('disabled').attr('disabled', 'disabled').text('Importing orders');
 
-            var sync_chunk = function(chunk_id){
-                progress_percents = Math.round(chunk_id * chunk_percentage);
+            var sync_chunk = function(chunkId){
+                progress_percents = Math.round(chunkId * chunkPercentage);
                 update_importing_message('Please wait... '+progress_percents+'% done', true);
 
                 // add form_key for magento controller check
-                data = {'store_id': store_id, 'chunk_id': chunk_id, 'form_key': window.FORM_KEY};
+                data = {
+                    'storeId': storeId,
+                    'chunkId': chunkId,
+                    'totalChunks': totalChunks,
+                    'form_key': window.FORM_KEY
+                };
                 jQuery.post('<?php echo $this->getAjaxUrl(); ?>', data, function(response) {
-                    new_chunk_id = chunk_id + 1;
-                    if(new_chunk_id < total_chunks){
+                    new_chunk_id = chunkId + 1;
+                    if(new_chunk_id < totalChunks){
                         setTimeout(function() {
                             sync_chunk(new_chunk_id);
                         }, 100);
