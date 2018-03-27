@@ -175,8 +175,10 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
                 $dataItem['id']     = $mainProduct->getId();
                 $dataItem['name']   = $mainProduct->getName();
                 $dataItem['url']    = $mainProduct->getProductUrl();
-                $dataItem['option_id'] = $item->getSku();
-                $dataItem['option_name'] = trim(str_replace("-", " ", $item->getName()));
+                // for legacy reasons - we have been passing the SKU as ID for the child products
+                $dataItem['option_id']    = $item->getSku();
+                $dataItem['option_sku']   = $item->getSku();
+                $dataItem['option_name']  = trim(str_replace("-", " ", $item->getName()));
                 $dataItem['option_price'] = (float)$item->getPrice();
             }
 
@@ -184,6 +186,7 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
                 $dataItem['image_url'] = (string)Mage::helper('catalog/image')->init($mainProduct, 'image');
             }
 
+            $dataItem['sku'] = $mainProduct->getSku();
             $data['items'][] = $dataItem;
         }
 
