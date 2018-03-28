@@ -1,14 +1,25 @@
-web:
-  image: metrilo.azurecr.io/magento1:latest
-  ports:
-    - "80:80"
-  links:
-    - db
-  env_file:
-    - env
-  volumes:
-    - ../:/plugin
-db:
-  image: mysql:5.6.23
-  env_file:
-    - env
+version: '3.0'
+services:
+  web:
+    image: metrilo.azurecr.io/magento1:latest
+    container_name: magento1
+    ports:
+      - "80:80"
+    links:
+      - db
+    env_file:
+      - env
+    volumes:
+      - magento1:/var/www
+      - ../:/plugin
+  db:
+    image: mysql:5.6
+    container_name: mysql-magento1
+    env_file:
+      - env
+    volumes:
+      - mysql1:/var/lib/mysql/data
+
+volumes:
+  magento1:
+  mysql1:

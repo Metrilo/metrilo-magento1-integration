@@ -94,6 +94,7 @@ class Metrilo_Analytics_Model_Observer
             $product = Mage::registry('current_product');
             $data =  array(
                 'id'    => $product->getId(),
+                'sku'   => $product->getSku(),
                 'name'  => $product->getName(),
                 'price' => $product->getFinalPrice(),
                 'url'   => $product->getProductUrl()
@@ -278,19 +279,21 @@ class Metrilo_Analytics_Model_Observer
 
         $data =  array(
             'id'            => (int)$product->getId(),
+            'sku'           => $item->toArray()['sku'],
             'price'         => (float)$product->getFinalPrice(),
             'name'          => $product->getName(),
             'url'           => $product->getProductUrl(),
             'quantity'      => $qty
         );
-
         // Add options for grouped or configurable products
         if ($item->isGrouped() || $item->isConfigurable()) {
             $data['id']     = $item->getId();
             $data['name']   = $item->getName();
             $data['url']    = $item->getProductUrl();
             // Options
+            // for legacy reasons - we have been passing the SKU as ID for the child products
             $data['option_id'] = $product->getSku();
+            $data['option_sku'] = $product->getSku();
             $data['option_name'] = trim(str_replace("-", " ", $product->getName()));
             $data['option_price'] = (float)$product->getFinalPrice();
         }
