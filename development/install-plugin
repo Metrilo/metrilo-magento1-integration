@@ -2,6 +2,7 @@ install-sampledata
 install-magento
 modman init
 n98-magerun config:set dev/template/allow_symlink 1
+n98-magerun config:set admin/security/session_cookie_lifetime 36000
 modman link /plugin
 modman deploy plugin
 n98-magerun cache:flush
