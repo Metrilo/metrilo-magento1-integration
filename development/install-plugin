@@ -4,4 +4,9 @@ modman init
 n98-magerun config:set dev/template/allow_symlink 1
 modman link /plugin
 modman deploy plugin
+
+n98-magerun config:set metrilo_analytics_settings/settings/enable 1
+n98-magerun config:set metrilo_analytics_settings/settings/api_key 1111111111111111
+n98-magerun config:set metrilo_analytics_settings/settings/api_secret 222222222222222222222222
+
 n98-magerun cache:flush
