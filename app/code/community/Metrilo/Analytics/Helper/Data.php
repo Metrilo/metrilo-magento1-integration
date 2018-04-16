@@ -203,6 +203,9 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
     {
         try {
             $ordersForSubmition = $this->_buildOrdersForSubmition($orders);
+            if (count($ordersForSubmition) < 1) {
+                return;
+            }
             $call = $this->_buildCall($storeId, $ordersForSubmition);
 
             $this->_callMetriloApi($storeId, $call);
@@ -236,7 +239,7 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         $ordersForSubmition = array();
 
         foreach ($orders as $order) {
-            if ($order->getId()) {
+            if ($order->getId() && $order->getStatus() != null) {
                 array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
             }
         }

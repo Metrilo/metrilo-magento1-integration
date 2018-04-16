@@ -22,7 +22,8 @@ class Metrilo_Analytics_Helper_Requestclient extends Mage_Core_Helper_Abstract
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_COOKIESESSION, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, 2000);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, 1000);
+        curl_setopt($curl, CURLOPT_TIMEOUT_MS, 3000);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_ENCODING, 'gzip');
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
