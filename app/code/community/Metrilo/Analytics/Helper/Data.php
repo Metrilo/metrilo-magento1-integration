@@ -124,6 +124,74 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         $this->getSession()->setData(Metrilo_Analytics_Block_Head::DATA_TAG, $events);
     }
 
+    private function orderPaymentMethod($order) {
+        try {
+            return $order->getPayment()->getMethodInstance()->getTitle();
+        // For the cases when the payment method was deleted.
+        } catch (Exception $e) {
+            return $order->getPayment()->method;
+        }
+    }
+
+    private function getProductDetails($item) {
+        $product = $item->getProduct();
+
+        $details = array(
+            'id'    => (string)$item->getProductId(),
+            'sku'   => $product->getSku(),
+            'price' => $item->getPrice(),
+            'name'  => $item->getName()
+        );
+
+        // For the cases when the image was deleted.
+        try {
+            if ($product->getImage()) {
+                $details['image_url'] = (string)Mage::helper('catalog/image')->init($product, 'image');
+            }
+        } catch (Exception $e) {}
+
+        return $details;
+    }
+
+    private function getItems($order) {
+        $items = array();
+
+        foreach ($order->getAllVisibleItems() as $item) {
+            // Main product attributes
+            $parentItemDetails = $this->getProductDetails($item);
+            $parentItemDetails['quantity'] = $item->getQtyOrdered();
+
+            $childrenItems = $item->getChildrenItems();
+
+            if (count($childrenItems) > 0) {
+                // price of the parrent doesn't matter if there are children
+                unset($parentItemDetails['price']);
+
+                foreach ($childrenItems as $childItem) {
+                    $childProductDetails = $this->getProductDetails($childItem);
+
+                    // For legacy reasons we are passing the child SKU as an identifier
+                    $optionId = ($childProductDetails['sku']) ? $childProductDetails['sku'] : $childProductDetails['id'];
+
+                    $childItemEntry = array_merge($parentItemDetails, array(
+                        'option_id'    => $optionId,
+                        'option_sku'   => $childProductDetails['sku'],
+                        'option_price' => $parentItemDetails['price'],
+                        'option_name'  => $childProductDetails['name'],
+                    ));
+
+
+                    array_push($items, array_filter($childItemEntry));
+                }
+            } else {
+                array_push($items, array_filter($parentItemDetails));
+            }
+        }
+
+        return $items;
+    }
+
+
     /**
      * Get order details and sort them for metrilo
      *
@@ -138,9 +206,8 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
             'amount'            => (float)$order->getGrandTotal(),
             'shipping_amount'   => (float)$order->getShippingAmount(),
             'tax_amount'        => $order->getTaxAmount(),
-            'items'             => array(),
             'shipping_method'   => $order->getShippingDescription(),
-            'payment_method'    => $order->getPayment()->getMethodInstance()->getTitle(),
+            'payment_method'    => $this->orderPaymentMethod($order),
         );
 
         $this->_assignBillingInfo($data, $order);
@@ -148,47 +215,10 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         if ($order->getCouponCode()) {
             $data['coupons'] = array($order->getCouponCode());
         }
-        $skusAdded = array();
-        foreach ($order->getAllItems() as $item) {
-            if (in_array($item->getSku(), $skusAdded)) continue;
 
-            $mainProduct = $item->getProduct();
+        $data['items'] = $this->getItems($order);
 
-            $skusAdded[] = $item->getSku();
-			$itemPrice = (float)($item->getPrice()) ? $item->getPrice() : $mainProduct->getFinalPrice();
-            $dataItem = array(
-                'id'        => (string)$item->getProductId(),
-                'price'     => (float)$itemPrice,
-                'name'      => (string)$item->getName(),
-                'url'       => (string)$mainProduct->getProductUrl(),
-                'quantity'  => (int)$item->getQtyOrdered()
-            );
-
-            if ($item->getProductType() == 'configurable' || $item->getProductType() == 'grouped') {
-                if ($item->getProductType() == 'grouped') {
-                    $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($item->getProductId());
-                    $parentId = $parentIds[0];
-                } else {
-                    $parentId = $item->getProductId();
-                }
-                $mainProduct = Mage::getModel('catalog/product')->load($parentId);
-                $dataItem['id']     = $mainProduct->getId();
-                $dataItem['name']   = $mainProduct->getName();
-                $dataItem['url']    = $mainProduct->getProductUrl();
-                // for legacy reasons - we have been passing the SKU as ID for the child products
-                $dataItem['option_id']    = $item->getSku();
-                $dataItem['option_sku']   = $item->getSku();
-                $dataItem['option_name']  = trim(str_replace("-", " ", $item->getName()));
-                $dataItem['option_price'] = (float)$item->getPrice();
-            }
-
-            if ($mainProduct->getImage()) {
-                $dataItem['image_url'] = (string)Mage::helper('catalog/image')->init($mainProduct, 'image');
-            }
-
-            $dataItem['sku'] = $mainProduct->getSku();
-            $data['items'][] = $dataItem;
-        }
+        Mage::log($data, null, 'Metrilo_Analytics.log');
 
         return $data;
     }
@@ -240,7 +270,11 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
 
         foreach ($orders as $order) {
             if ($order->getId() && $order->getStatus() != null) {
-                array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
+                try {
+                    array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
+                } catch (Exception $e) {
+                    Mage::log($e->getMessage(), null, 'Metrilo_Analytics.log');
+                }
             }
         }
 
