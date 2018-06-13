@@ -5,18 +5,18 @@ class Metrilo_Analytics_Helper_Requestclient extends Mage_Core_Helper_Abstract
     {
         $encodedBody = $bodyArray ? json_encode($bodyArray) : '';
         $parsedUrl = parse_url($url);
-        $headers = [
+        $headers = array(
             'Content-Type: application/json',
             'Accept: */*',
             'User-Agent: RequestClient/2.0.0',
             'Connection: Close',
             'Host: '.$parsedUrl['host']
-        ];
+        );
 
         return $this->curlCall($url, $headers, $encodedBody, 'POST');
     }
 
-    private function curlCall($url, $headers = [], $body = '', $method)
+    private function curlCall($url, $headers = array(), $body = '', $method)
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
