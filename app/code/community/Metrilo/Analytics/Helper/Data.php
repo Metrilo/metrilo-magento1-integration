@@ -199,20 +199,23 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      * @param Array(Mage_Sales_Model_Order) $orders
      * @return void
      */
-    public function callBatchApi($storeId, $orders, $async = true)
+    public function callBatchApi($storeId, $orders)
     {
         try {
             $ordersForSubmition = $this->_buildOrdersForSubmition($orders);
+            if (count($ordersForSubmition) < 1) {
+                return;
+            }
             $call = $this->_buildCall($storeId, $ordersForSubmition);
 
-            $this->_callMetriloApi($storeId, $call, $async);
+            $this->_callMetriloApi($storeId, $call);
         } catch (Exception $e) {
             Mage::log($e->getMessage(), null, 'Metrilo_Analytics.log');
         }
     }
 
     // Private functions start here
-    private function _callMetriloApi($storeId, $call, $async = true) {
+    private function _callMetriloApi($storeId, $call) {
         ksort($call);
 
         $basedCall = base64_encode(Mage::helper('core')->jsonEncode($call));
@@ -223,9 +226,8 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
             'hs'  => $basedCall
         );
 
-        /** @var Metrilo_Analytics_Helper_Asynchttpclient $asyncHttpHelper */
-        $asyncHttpHelper = Mage::helper('metrilo_analytics/asynchttpclient');
-        $asyncHttpHelper->post($this->push_domain.'/bt', $requestBody, $async);
+        $client = Mage::helper('metrilo_analytics/requestclient');
+        $client->post($this->push_domain.'/bt', $requestBody);
     }
 
     /**
@@ -237,7 +239,7 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         $ordersForSubmition = array();
 
         foreach ($orders as $order) {
-            if ($order->getId()) {
+            if ($order->getId() && $order->getStatus() != null) {
                 array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
             }
         }

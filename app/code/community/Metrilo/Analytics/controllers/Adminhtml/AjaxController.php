@@ -29,7 +29,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
             // Get orders from the Database
             $orders = $import->getOrders($storeId, $chunkId);
             // Send orders via API helper method (last parameter shows synchronity)
-            $helper->callBatchApi($storeId, $orders, false);
+            $helper->callBatchApi($storeId, $orders);
 
             if ($chunkId == $totalChunks - 1) {
                 $helper->createActivity($storeId, 'import_end');
