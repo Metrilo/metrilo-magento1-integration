@@ -8,7 +8,7 @@ services:
     links:
       - db
     env_file:
-      - env
+      - container_env
     volumes:
       - magento1:/var/www
       - ../:/plugin
@@ -16,7 +16,7 @@ services:
     image: mysql:5.6
     container_name: mysql-magento1
     env_file:
-      - env
+      - container_env
     volumes:
       - mysql1:/var/lib/mysql/data
 
