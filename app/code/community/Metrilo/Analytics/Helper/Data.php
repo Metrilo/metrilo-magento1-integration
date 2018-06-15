@@ -164,9 +164,6 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
             $childrenItems = $item->getChildrenItems();
 
             if (count($childrenItems) > 0) {
-                // price of the parrent doesn't matter if there are children
-                unset($parentItemDetails['price']);
-
                 foreach ($childrenItems as $childItem) {
                     $childProductDetails = $this->getProductDetails($childItem);
 
@@ -179,7 +176,6 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
                         'option_price' => $parentItemDetails['price'],
                         'option_name'  => $childProductDetails['name'],
                     ));
-
 
                     array_push($items, array_filter($childItemEntry));
                 }
