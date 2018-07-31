@@ -2,7 +2,7 @@
   "name": "metrilo/metrilo-magento1-integration",
   "type": "magento-module",
   "description": "Metrilo plugin for Magento1",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/Metrilo/metrilo-magento1-integration",
   "authors": [
     {
