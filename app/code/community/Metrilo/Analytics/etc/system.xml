@@ -48,6 +48,7 @@
                         <api_key>
                             <label>API Token</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>metrilo_analytics/trimmed</backend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -57,6 +58,7 @@
                         <api_secret>
                             <label>API Secret</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>metrilo_analytics/trimmed</backend_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>

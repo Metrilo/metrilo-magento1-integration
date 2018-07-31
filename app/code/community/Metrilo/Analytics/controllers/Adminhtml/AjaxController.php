@@ -18,12 +18,23 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
         $helper = Mage::helper('metrilo_analytics');
         try {
             $import = Mage::getSingleton('metrilo_analytics/import');
-            $storeId = (int)$this->getRequest()->getParam('store_id');
-            $chunkId = (int)$this->getRequest()->getParam('chunk_id');
+            $storeId = (int)$this->getRequest()->getParam('storeId');
+            $chunkId = (int)$this->getRequest()->getParam('chunkId');
+            $totalChunks = (int)$this->getRequest()->getParam('totalChunks');
+
+            if ($chunkId == 0) {
+                $helper->createActivity($storeId, 'import_start');
+            }
+
             // Get orders from the Database
             $orders = $import->getOrders($storeId, $chunkId);
             // Send orders via API helper method (last parameter shows synchronity)
-            $helper->callBatchApi($storeId, $orders, false);
+            $helper->callBatchApi($storeId, $orders);
+
+            if ($chunkId == $totalChunks - 1) {
+                $helper->createActivity($storeId, 'import_end');
+            }
+
             $result['success'] = true;
         } catch (Exception $e) {
             Mage::logException($e);

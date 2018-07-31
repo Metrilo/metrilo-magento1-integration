@@ -10,6 +10,28 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
     private $push_domain = 'http://p.metrilo.com';
 
     /**
+     * Checks if the api key and secret are valid
+     *
+     * @return boolean
+     */
+    public function createActivity($storeId, $type)
+    {
+        $key = $this->getApiToken($storeId);
+        $secret = $this->getApiSecret($storeId);
+
+        $data = array(
+            'type' => $type,
+            'signature' => md5($key . $type . $secret)
+        );
+
+        $url = $this->push_domain.'/tracking/' . $key . '/activity';
+
+        $responseCode = Mage::helper('metrilo_analytics/requestclient')->post($url, $data)['code'];
+
+        return $responseCode == 200;
+    }
+
+    /**
      * Get session instance
      *
      * @return Mage_Core_Model_Session
@@ -102,6 +124,70 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         $this->getSession()->setData(Metrilo_Analytics_Block_Head::DATA_TAG, $events);
     }
 
+    private function orderPaymentMethod($order) {
+        try {
+            return $order->getPayment()->getMethodInstance()->getTitle();
+        // For the cases when the payment method was deleted.
+        } catch (Exception $e) {
+            return $order->getPayment()->method;
+        }
+    }
+
+    private function getProductDetails($item) {
+        $product = $item->getProduct();
+
+        $details = array(
+            'id'    => (string)$item->getProductId(),
+            'sku'   => $product->getSku(),
+            'price' => $item->getPrice(),
+            'name'  => $item->getName()
+        );
+
+        // For the cases when the image was deleted.
+        try {
+            if ($product->getImage()) {
+                $details['image_url'] = (string)Mage::helper('catalog/image')->init($product, 'image');
+            }
+        } catch (Exception $e) {}
+
+        return $details;
+    }
+
+    private function getItems($order) {
+        $items = array();
+
+        foreach ($order->getAllVisibleItems() as $item) {
+            // Main product attributes
+            $parentItemDetails = $this->getProductDetails($item);
+            $parentItemDetails['quantity'] = $item->getQtyOrdered();
+
+            $childrenItems = $item->getChildrenItems();
+
+            if (count($childrenItems) > 0) {
+                foreach ($childrenItems as $childItem) {
+                    $childProductDetails = $this->getProductDetails($childItem);
+
+                    // For legacy reasons we are passing the child SKU as an identifier
+                    $optionId = ($childProductDetails['sku']) ? $childProductDetails['sku'] : $childProductDetails['id'];
+
+                    $childItemEntry = array_merge($parentItemDetails, array(
+                        'option_id'    => $optionId,
+                        'option_sku'   => $childProductDetails['sku'],
+                        'option_price' => $parentItemDetails['price'],
+                        'option_name'  => $childProductDetails['name'],
+                    ));
+
+                    array_push($items, array_filter($childItemEntry));
+                }
+            } else {
+                array_push($items, array_filter($parentItemDetails));
+            }
+        }
+
+        return $items;
+    }
+
+
     /**
      * Get order details and sort them for metrilo
      *
@@ -116,9 +202,8 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
             'amount'            => (float)$order->getGrandTotal(),
             'shipping_amount'   => (float)$order->getShippingAmount(),
             'tax_amount'        => $order->getTaxAmount(),
-            'items'             => array(),
             'shipping_method'   => $order->getShippingDescription(),
-            'payment_method'    => $order->getPayment()->getMethodInstance()->getTitle(),
+            'payment_method'    => $this->orderPaymentMethod($order),
         );
 
         $this->_assignBillingInfo($data, $order);
@@ -126,44 +211,10 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         if ($order->getCouponCode()) {
             $data['coupons'] = array($order->getCouponCode());
         }
-        $skusAdded = array();
-        foreach ($order->getAllItems() as $item) {
-            if (in_array($item->getSku(), $skusAdded)) continue;
 
-            $mainProduct = $item->getProduct();
+        $data['items'] = $this->getItems($order);
 
-            $skusAdded[] = $item->getSku();
-			$itemPrice = (float)($item->getPrice()) ? $item->getPrice() : $mainProduct->getFinalPrice();
-            $dataItem = array(
-                'id'        => (string)$item->getProductId(),
-                'price'     => (float)$itemPrice,
-                'name'      => (string)$item->getName(),
-                'url'       => (string)$mainProduct->getProductUrl(),
-                'quantity'  => (int)$item->getQtyOrdered()
-            );
-
-            if ($item->getProductType() == 'configurable' || $item->getProductType() == 'grouped') {
-                if ($item->getProductType() == 'grouped') {
-                    $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($item->getProductId());
-                    $parentId = $parentIds[0];
-                } else {
-                    $parentId = $item->getProductId();
-                }
-                $mainProduct = Mage::getModel('catalog/product')->load($parentId);
-                $dataItem['id']     = $mainProduct->getId();
-                $dataItem['name']   = $mainProduct->getName();
-                $dataItem['url']    = $mainProduct->getProductUrl();
-                $dataItem['option_id'] = $item->getSku();
-                $dataItem['option_name'] = trim(str_replace("-", " ", $item->getName()));
-                $dataItem['option_price'] = (float)$item->getPrice();
-            }
-
-            if ($mainProduct->getImage()) {
-                $dataItem['image_url'] = (string)Mage::helper('catalog/image')->init($mainProduct, 'image');
-            }
-
-            $data['items'][] = $dataItem;
-        }
+        Mage::log($data, null, 'Metrilo_Analytics.log');
 
         return $data;
     }
@@ -174,20 +225,23 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      * @param Array(Mage_Sales_Model_Order) $orders
      * @return void
      */
-    public function callBatchApi($storeId, $orders, $async = true)
+    public function callBatchApi($storeId, $orders)
     {
         try {
             $ordersForSubmition = $this->_buildOrdersForSubmition($orders);
+            if (count($ordersForSubmition) < 1) {
+                return;
+            }
             $call = $this->_buildCall($storeId, $ordersForSubmition);
 
-            $this->_callMetriloApi($storeId, $call, $async);
+            $this->_callMetriloApi($storeId, $call);
         } catch (Exception $e) {
             Mage::log($e->getMessage(), null, 'Metrilo_Analytics.log');
         }
     }
 
     // Private functions start here
-    private function _callMetriloApi($storeId, $call, $async = true) {
+    private function _callMetriloApi($storeId, $call) {
         ksort($call);
 
         $basedCall = base64_encode(Mage::helper('core')->jsonEncode($call));
@@ -198,9 +252,8 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
             'hs'  => $basedCall
         );
 
-        /** @var Metrilo_Analytics_Helper_Asynchttpclient $asyncHttpHelper */
-        $asyncHttpHelper = Mage::helper('metrilo_analytics/asynchttpclient');
-        $asyncHttpHelper->post($this->push_domain.'/bt', $requestBody, $async);
+        $client = Mage::helper('metrilo_analytics/requestclient');
+        $client->post($this->push_domain.'/bt', $requestBody);
     }
 
     /**
@@ -212,8 +265,12 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         $ordersForSubmition = array();
 
         foreach ($orders as $order) {
-            if ($order->getId()) {
-                array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
+            if ($order->getId() && $order->getStatus() != null) {
+                try {
+                    array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
+                } catch (Exception $e) {
+                    Mage::log($e->getMessage(), null, 'Metrilo_Analytics.log');
+                }
             }
         }
 
