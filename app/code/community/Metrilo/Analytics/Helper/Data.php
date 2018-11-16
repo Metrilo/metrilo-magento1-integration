@@ -265,7 +265,7 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         $ordersForSubmition = array();
 
         foreach ($orders as $order) {
-            if ($order->getId() && $order->getStatus() != null) {
+            if ($order->getId() && $order->getStatus() != null && trim($order->getCustomerEmail())) {
                 try {
                     array_push($ordersForSubmition, $this->_buildOrderForSubmition($order));
                 } catch (Exception $e) {

@@ -189,7 +189,7 @@ class Metrilo_Analytics_Model_Observer
         $helper = Mage::helper('metrilo_analytics');
         $data = array();
         $order = $observer->getOrder();
-        if ($order->getId()) {
+        if ($order->getId() && trim($order->getCustomerEmail())) {
             $data = $helper->prepareOrderDetails($order);
             if($order->getCustomerIsGuest()) {
                 $identify = array(
