@@ -1,27 +1,62 @@
 <?php
-/**
- * Block for head part who render all js lines
- *
- * @author Miroslav Petrov <miro91tn@gmail.com>
- */
 class Metrilo_Analytics_Block_Head extends Mage_Core_Block_Template
 {
+    
     /**
      * key in session storage
      */
     const DATA_TAG = "metrilo_events";
+    
+    private $_helper;
+    private $_sessionEvents;
+    
+    public function _construct()
+    {
+        $this->_helper        = Mage::helper('metrilo_analytics');
+        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionevents');
+    }
 
     /**
      * Get events to track them to metrilo js api
      *
      * @return array
      */
-    public function getEvents()
+    public function getEvent()
     {
-        $events = (array)Mage::getSingleton('core/session')->getData(self::DATA_TAG);
-        // clear events from session ater get events once
-        Mage::getSingleton('core/session')->setData(self::DATA_TAG,'');
-        return array_filter($events);
+        $actionName = Mage::app()->getFrontController()->getAction()->getFullActionName();
+        switch($actionName) {
+            // product view pages
+            case 'catalog_product_view':
+                return Mage::helper('metrilo_analytics/events_productview')->callJs();
+            // category view pages
+            case 'catalog_category_view':
+                return Mage::helper('metrilo_analytics/events_categoryview')->callJS();
+            // catalog search pages
+            case 'catalogsearch_result_index':
+                return Mage::helper('metrilo_analytics/events_catalogsearch')->callJS();
+            // catalog advanced result page
+            case 'catalogsearch_advanced_result':
+                return Mage::helper('metrilo_analytics/events_catalogsearch')->callJS();
+            // cart view pages
+            case 'checkout_cart_index':
+                return Mage::helper('metrilo_analytics/events_cartview')->callJS();
+            // checkout view page
+            case 'checkout_index_index':
+                return Mage::helper('metrilo_analytics/events_checkoutview')->callJS();
+            // CMS and any other pages
+            default:
+                return Mage::helper('metrilo_analytics/events_pageview')->callJs();
+        }
+    }
+    
+    public function getEvents() {
+        $sessionEvents   = $this->_sessionEvents->getSessionEvents();
+        $sessionEvents[] = $this->getEvent();
+        return $sessionEvents;
+    }
+    
+    public function getLibraryUrl() {
+        return $this->_helper->getApiEndpoint() . '/tracking.js?token=' . $this->_helper->getApiToken($this->_helper->getStoreId());
     }
 
     /**
@@ -32,12 +67,11 @@ class Metrilo_Analytics_Block_Head extends Mage_Core_Block_Template
     protected function _toHtml()
     {
         $html = parent::_toHtml();
-        $helper = Mage::helper('metrilo_analytics');
 
         $request = Mage::app()->getRequest();
-        $storeId = $helper->getStoreId($request);
+        $storeId = $this->_helper->getStoreId($request);
 
-        if($helper->isEnabled($storeId)) {
+        if($this->_helper->isEnabled($storeId)) {
             return $html;
         }
 
