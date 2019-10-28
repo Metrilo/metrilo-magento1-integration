@@ -14,7 +14,6 @@
             </updates>
         </layout>
         <events>
-            <!-- Track AddToCart Changes Start -->
             <checkout_cart_product_add_after>
                 <observers>
                     <add_to_cart>
@@ -24,8 +23,6 @@
                     </add_to_cart>
                 </observers>
             </checkout_cart_product_add_after>
-            <!-- Track AddToCart Changes END -->
-            <!-- Track RemoveFromCart Changes START -->
             <sales_quote_remove_item>
                 <observers>
                     <remove_from_cart>
@@ -35,8 +32,6 @@
                     </remove_from_cart>
                 </observers>
             </sales_quote_remove_item>
-            <!-- Track RemoveFromCart Changes END -->
-            <!-- Track Order Changes START -->
             <sales_order_place_after>
                 <observers>
                     <place_order>
@@ -46,23 +41,19 @@
                     </place_order>
                 </observers>
             </sales_order_place_after>
-            <!-- Track Order Changes END -->
             <customer_login>
                 <observers>
-                    <!-- Track Identify Login START -->
                     <metrilo_identify_customer_login>
                         <type>singleton</type>
                         <class>Metrilo_Analytics_Model_IdentifyCustomerObserver</class>
                         <method>identifyCustomer</method>
                     </metrilo_identify_customer_login>
-                    <!-- Track Identify Login END -->
                 </observers>
             </customer_login>
         </events>
     </frontend>
     <global>
         <events>
-            <!-- Track Customer Changes (combining newsletter, admin-customer, user-customer, acc-register events) START -->
             <customer_save_after>
                 <observers>
                     <metrilo_event_customer_update>
@@ -70,13 +61,11 @@
                         <class>Metrilo_Analytics_Model_CustomerObserver</class>
                         <method>customerUpdate</method>
                     </metrilo_event_customer_update>
-                    <!-- Track Identify Customer Email Change START -->
                     <metrilo_identify_customer_update>
                         <type>singleton</type>
                         <class>Metrilo_Analytics_Model_IdentifyCustomerObserver</class>
                         <method>identifyCustomer</method>
                     </metrilo_identify_customer_update>
-                    <!-- Track Identify Customer Email Change END -->
                 </observers>
             </customer_save_after>
             <newsletter_subscriber_save_after>
@@ -88,8 +77,6 @@
                     </metrilo_event_subscriber_update>
                 </observers>
             </newsletter_subscriber_save_after>
-            <!-- Track Customer Changes END -->
-            <!-- Track Order Changes (combining admin order edit/create START -->
             <sales_order_save_after>
                 <observers>
                     <metrilo_event_order>
@@ -97,17 +84,13 @@
                         <class>Metrilo_Analytics_Model_OrderObserver</class>
                         <method>orderUpdate</method>
                     </metrilo_event_order>
-                    <!-- Track Identify Customer Order Change END -->
                     <metrilo_identify_customer_order>
                         <type>singleton</type>
                         <class>Metrilo_Analytics_Model_IdentifyCustomerObserver</class>
                         <method>identifyCustomer</method>
                     </metrilo_identify_customer_order>
-                    <!-- Track Identify Customer Order Change END -->
                 </observers>
             </sales_order_save_after>
-            <!-- Track Order Changes END -->
-            <!-- Track Config Changes START -->
             <admin_system_config_changed_section_metrilo_analytics_settings>
                 <observers>
                     <modulename>
@@ -117,7 +100,6 @@
                     </modulename>
                 </observers>
             </admin_system_config_changed_section_metrilo_analytics_settings>
-            <!-- Track Config Changes END -->
         </events>
         <models>
             <metrilo_analytics>
@@ -155,7 +137,6 @@
             </updates>
         </layout>
         <events>
-            <!-- Track Category Changes START -->
             <catalog_category_save_after>
                 <observers>
                     <metrilo_event_category_update>
@@ -165,8 +146,6 @@
                     </metrilo_event_category_update>
                 </observers>
             </catalog_category_save_after>
-            <!-- Track Category Changes END -->
-            <!-- Track Product Changes START -->
             <catalog_product_save_after>
                 <observers>
                     <metrilo_event_category_update>
@@ -176,7 +155,6 @@
                     </metrilo_event_category_update>
                 </observers>
             </catalog_product_save_after>
-            <!-- Track Product Changes END -->
         </events>
     </adminhtml>
     <default>

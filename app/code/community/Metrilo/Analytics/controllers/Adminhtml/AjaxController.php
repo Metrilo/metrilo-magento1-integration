@@ -47,8 +47,6 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                         $activityHelper->createActivity($storeId, 'import_start');
                     }
                     $serializedCustomers = $this->_serializeRecords($this->_customerObject->getCustomers($storeId, $chunkId), Mage::helper('metrilo_analytics/customerserializer'));
-//                    Mage::log(json_encode(array('SerializedCustomers' => $serializedCustomers)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                    Mage::log(json_encode(array('ClientCall' => $client->customerBatch($serializedCustomers))) . PHP_EOL, null, 'Metrilo_Analytics.log');
                     // Unlike m2 where every customer has been assigned to specific store (storeview), in m1 customers created
                     // via admin have admin storeId (0) as value witch makes it impossible to map these customers to theirs
                     // respective store views (since all admin created accounts will have storeId value of 0). Also admin
@@ -58,8 +56,6 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                     break;
                 case 'categories':
                     $serializedCategories = $this->_serializeRecords($this->_categoryObject->getCategories($storeId, $chunkId), Mage::helper('metrilo_analytics/categoryserializer'));
-//                    Mage::log(json_encode(array('SerializedCategories' => $serializedCategories)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                    Mage::log(json_encode(array('ClientCall' => $client->categoryBatch($serializedCategories))) . PHP_EOL, null, 'Metrilo_Analytics.log');
                     $result['success']    = $client->categoryBatch($serializedCategories);
                     break;
                 case 'deletedProducts':
@@ -68,22 +64,16 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                         $serializedDeletedProducts = Mage::helper('metrilo_analytics/deletedproductserializer')->serialize($deletedProductOrders);
                         $deletedProductChunks      = array_chunk($serializedDeletedProducts, Metrilo_Analytics_Helper_Data::chunkItems);
                         foreach($deletedProductChunks as $chunk) {
-//                            Mage::log(json_encode(array('SerializedDeletedProducts' => $chunk)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                            Mage::log(json_encode(array('ClientCall' => $client->productBatch($chunk))) . PHP_EOL, null, 'Metrilo_Analytics.log');
                             $client->productBatch($chunk);
                         }
                     }
                     break;
                 case 'products':
                     $serializedProducts = $this->_serializeRecords($this->_productObject->getProducts($storeId, $chunkId), Mage::helper('metrilo_analytics/productserializer'));
-//                    Mage::log(json_encode(array('SerializedProducts' => $serializedProducts)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                    Mage::log(json_encode(array('ClientCall' => $client->productBatch($serializedProducts))) . PHP_EOL, null, 'Metrilo_Analytics.log');
                     $result['success'] = $client->productBatch($serializedProducts);
                     break;
                 case 'orders':
                     $serializedOrders = $this->_serializeRecords($this->_orderObject->getOrders($storeId, $chunkId), Mage::helper('metrilo_analytics/orderserializer'));
-//                    Mage::log(json_encode(array('SerializedOrders' => $serializedOrders)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                    Mage::log(json_encode(array('ClientCall' => $client->orderBatch($serializedOrders))) . PHP_EOL, null, 'Metrilo_Analytics.log');
                     $result['success'] = $client->orderBatch($serializedOrders); //disable to reduce api call spam to production project.
                     if ($chunkId == (int)$this->getRequest()->getParam('ordersChunks') - 1) {
                         $activityHelper->createActivity($storeId, 'import_end');

@@ -25,8 +25,6 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                 $client             = Mage::helper('metrilo_analytics/apiclient')->getClient($this->_helper->getStoreId());
                 $serializedCustomer = $this->_customerSerializer->serialize($customer);
                 $client->customer($serializedCustomer);
-//                Mage::log(json_encode(array('CustomerUpdate event: ' => $serializedCustomer)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                Mage::log(json_encode(array('CustomerUpdate api call: ' => $client->customer($serializedCustomer))) . PHP_EOL, null, 'Metrilo_Analytics.log');
             }
         } catch (Exception $e) {
             Mage::log(json_encode(array('CustomerObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');

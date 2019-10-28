@@ -35,8 +35,6 @@ class Metrilo_Analytics_Model_ProductObserver extends Varien_Event_Observer
                     $productWithRequestPath = $this->_productData->getProductWithRequestPath($productId, $storeId);
                     $serializedProduct      = $this->_productSerializer->serialize($productWithRequestPath);
                     $client->product($serializedProduct);
-//                    Mage::log(json_encode(array('ProductUpdate event: ' => $serializedProduct)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//                    Mage::log(json_encode(array('ProductUpdate api call: ' => $client->product($serializedProduct))) . PHP_EOL, null, 'Metrilo_Analytics.log');
                 }
             }
         } catch (Exception $e) {

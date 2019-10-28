@@ -31,8 +31,6 @@ class Metrilo_Analytics_Model_CategoryObserver extends Varien_Event_Observer
                 $categoryObject     = $this->_categoryData->getCategoryWithRequestPath($category->getId(), $storeId);
                 $serializedCategory = $this->_categorySerializer->serialize($categoryObject);
                 $client->category($serializedCategory);
-//            Mage::log(json_encode(array('CategoryUpdate event: ' => $serializedCategory)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//            Mage::log(json_encode(array('CategoryUpdate api call: ' => $client->category($serializedCategory))) . PHP_EOL, null, 'Metrilo_Analytics.log');
             }
         } catch (Exception $e) {
             Mage::log(json_encode(array('CategoryObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');

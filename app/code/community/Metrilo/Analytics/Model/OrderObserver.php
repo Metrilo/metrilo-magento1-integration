@@ -17,8 +17,6 @@ class Metrilo_Analytics_Model_OrderObserver extends Varien_Event_Observer
             $order           = $observer->getOrder();
             $serializedOrder = $this->_orderSerializer->serialize($order);
             $client->order($serializedOrder);
-//            Mage::log(json_encode(array('OrderUpdate event: ' => $serializedOrder)) . PHP_EOL, null, 'Metrilo_Analytics.log');
-//            Mage::log(json_encode(array('OrderUpdate api call: ' => $client->order($serializedOrder))) . PHP_EOL, null, 'Metrilo_Analytics.log');
         } catch (Exception $e) {
             Mage::log(json_encode(array('OrderObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
         }
