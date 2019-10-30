@@ -7,7 +7,7 @@ class Metrilo_Analytics_Model_RemoveFromCartObserver extends Varien_Event_Observ
     public function _construct()
     {
         $this->_helper        = Mage::helper('metrilo_analytics');
-        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionevents');
+        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionEvents');
     }
     
     public function removeFromCart($observer)

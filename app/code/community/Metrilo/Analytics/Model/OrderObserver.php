@@ -6,7 +6,7 @@ class Metrilo_Analytics_Model_OrderObserver extends Varien_Event_Observer
     
     public function _construct()
     {
-        $this->_orderSerializer = Mage::helper('metrilo_analytics/orderserializer');
+        $this->_orderSerializer = Mage::helper('metrilo_analytics/orderSerializer');
         $this->_helper          = Mage::helper('metrilo_analytics');
     }
     

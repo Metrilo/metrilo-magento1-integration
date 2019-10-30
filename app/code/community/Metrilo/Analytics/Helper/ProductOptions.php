@@ -13,7 +13,7 @@ class Metrilo_Analytics_Helper_ProductOptions extends Mage_Core_Helper_Abstract
             ->addFilterByRequiredOptions();
         
         foreach ($childrenProducts as $childProduct) {
-            $imageUrl = (!empty($childProduct->getImage())) ? Mage::helper('metrilo_analytics/productimageurl')->getProductImageUrl($childProduct->getImage()) : '';
+            $imageUrl = (!empty($childProduct->getImage())) ? Mage::helper('metrilo_analytics/productImageUrl')->getProductImageUrl($childProduct->getImage()) : '';
             
             $productOptions[] = [
                 'id'       => $childProduct->getId(),

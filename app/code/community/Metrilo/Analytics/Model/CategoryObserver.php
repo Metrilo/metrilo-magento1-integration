@@ -7,8 +7,8 @@ class Metrilo_Analytics_Model_CategoryObserver extends Varien_Event_Observer
     
     public function _construct()
     {
-        $this->_categorySerializer = Mage::helper('metrilo_analytics/categoryserializer');
-        $this->_categoryData       = Mage::getModel('metrilo_analytics/categorydata');
+        $this->_categorySerializer = Mage::helper('metrilo_analytics/categorySerializer');
+        $this->_categoryData       = Mage::getModel('metrilo_analytics/categoryData');
         $this->_helper             = Mage::helper('metrilo_analytics');
     }
     

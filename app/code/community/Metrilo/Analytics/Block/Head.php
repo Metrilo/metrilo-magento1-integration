@@ -13,7 +13,7 @@ class Metrilo_Analytics_Block_Head extends Mage_Core_Block_Template
     public function _construct()
     {
         $this->_helper        = Mage::helper('metrilo_analytics');
-        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionevents');
+        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionEvents');
     }
 
     /**
@@ -27,25 +27,25 @@ class Metrilo_Analytics_Block_Head extends Mage_Core_Block_Template
         switch($actionName) {
             // product view pages
             case 'catalog_product_view':
-                return Mage::helper('metrilo_analytics/events_productview')->callJs();
+                return Mage::helper('metrilo_analytics/events_productView')->callJs();
             // category view pages
             case 'catalog_category_view':
-                return Mage::helper('metrilo_analytics/events_categoryview')->callJS();
+                return Mage::helper('metrilo_analytics/events_categoryView')->callJS();
             // catalog search pages
             case 'catalogsearch_result_index':
-                return Mage::helper('metrilo_analytics/events_catalogsearch')->callJS();
+                return Mage::helper('metrilo_analytics/events_catalogSearch')->callJS();
             // catalog advanced result page
             case 'catalogsearch_advanced_result':
-                return Mage::helper('metrilo_analytics/events_catalogsearch')->callJS();
+                return Mage::helper('metrilo_analytics/events_catalogSearch')->callJS();
             // cart view pages
             case 'checkout_cart_index':
-                return Mage::helper('metrilo_analytics/events_cartview')->callJS();
+                return Mage::helper('metrilo_analytics/events_cartView')->callJS();
             // checkout view page
             case 'checkout_index_index':
-                return Mage::helper('metrilo_analytics/events_checkoutview')->callJS();
+                return Mage::helper('metrilo_analytics/events_checkoutView')->callJS();
             // CMS and any other pages
             default:
-                return Mage::helper('metrilo_analytics/events_pageview')->callJs();
+                return Mage::helper('metrilo_analytics/events_pageView')->callJs();
         }
     }
     

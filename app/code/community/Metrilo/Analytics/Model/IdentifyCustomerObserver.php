@@ -7,7 +7,7 @@ class Metrilo_Analytics_Model_IdentifyCustomerObserver extends Varien_Event_Obse
     public function _construct()
     {
         $this->_helper        = Mage::helper('metrilo_analytics');
-        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionevents');
+        $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionEvents');
     }
     
     private function getEventEmail($observer) {

@@ -3,8 +3,8 @@ class Metrilo_Analytics_Helper_ProductSerializer extends Mage_Core_Helper_Abstra
 {
     public function serialize($product)
     {
-        $productImageUrlHelper = Mage::helper('metrilo_analytics/productimageurl');
-        $productOptionsHelper  = Mage::helper('metrilo_analytics/productoptions');
+        $productImageUrlHelper = Mage::helper('metrilo_analytics/productImageUrl');
+        $productOptionsHelper  = Mage::helper('metrilo_analytics/productOptions');
         $productId = $product->getId();
         
         if ($product->getTypeId() === 'simple' && $productOptionsHelper->getParentIds($productId) != []) {

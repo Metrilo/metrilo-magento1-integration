@@ -8,7 +8,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
     public function _construct()
     {
         $this->_customerModel      = Mage::getModel('customer/customer');
-        $this->_customerSerializer = Mage::helper('metrilo_analytics/customerserializer');
+        $this->_customerSerializer = Mage::helper('metrilo_analytics/customerSerializer');
         $this->_helper             = Mage::helper('metrilo_analytics');
     }
     

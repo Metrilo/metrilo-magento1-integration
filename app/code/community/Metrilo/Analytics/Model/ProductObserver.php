@@ -7,8 +7,8 @@ class Metrilo_Analytics_Model_ProductObserver extends Varien_Event_Observer
     
     public function _construct()
     {
-        $this->_productSerializer = Mage::helper('metrilo_analytics/productserializer');
-        $this->_productData       = Mage::getModel('metrilo_analytics/productdata');
+        $this->_productSerializer = Mage::helper('metrilo_analytics/productSerializer');
+        $this->_productData       = Mage::getModel('metrilo_analytics/productData');
         $this->_helper            = Mage::helper('metrilo_analytics');
     }
     
@@ -28,7 +28,7 @@ class Metrilo_Analytics_Model_ProductObserver extends Varien_Event_Observer
             }
             foreach ($productStoreIds as $storeId) {
                 $client         = Mage::helper('metrilo_analytics/apiclient')->getClient($storeId);
-                $productParents = Mage::helper('metrilo_analytics/productoptions')->getParentIds($product->getId());
+                $productParents = Mage::helper('metrilo_analytics/productOptions')->getParentIds($product->getId());
                 $productsToSync = ($productParents) ? $productParents : [$product->getId()];
     
                 foreach ($productsToSync as $productId) {
