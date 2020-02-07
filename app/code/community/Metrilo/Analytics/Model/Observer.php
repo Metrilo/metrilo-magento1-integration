@@ -172,7 +172,7 @@ class Metrilo_Analytics_Model_Observer
         $product = $item->getProduct();
 
         $data = array(
-            'id' => $product->getId()
+            'id' => $product->getSku() ? $product->getSku() : $product->getId()
         );
 
         $helper->addEvent('track', 'remove_from_cart', $data);
@@ -274,6 +274,7 @@ class Metrilo_Analytics_Model_Observer
      */
     private function _addToCart($productId, $item, $qty)
     {
+//        $product->getId(), $cartProduct, $item->getQty()
         $helper = Mage::helper('metrilo_analytics');
         $product = Mage::getModel('catalog/product')->load($productId);
 
@@ -292,7 +293,8 @@ class Metrilo_Analytics_Model_Observer
             $data['url']    = $item->getProductUrl();
             // Options
             // for legacy reasons - we have been passing the SKU as ID for the child products
-            $data['option_id'] = $product->getSku();
+            $optionSku = $product->getSku();
+            $data['option_id'] = $optionSku ? $optionSku : $product->getId();
             $data['option_sku'] = $product->getSku();
             $data['option_name'] = trim(str_replace("-", " ", $product->getName()));
             $data['option_price'] = (float)$product->getFinalPrice();
