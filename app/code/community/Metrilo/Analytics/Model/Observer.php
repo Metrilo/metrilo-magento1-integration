@@ -295,7 +295,7 @@ class Metrilo_Analytics_Model_Observer
             // for legacy reasons - we have been passing the SKU as ID for the child products
             $optionSku = $product->getSku();
             $data['option_id'] = $optionSku ? $optionSku : $product->getId();
-            $data['option_sku'] = $product->getSku();
+            $data['option_sku'] = $optionSku;
             $data['option_name'] = trim(str_replace("-", " ", $product->getName()));
             $data['option_price'] = (float)$product->getFinalPrice();
         }
