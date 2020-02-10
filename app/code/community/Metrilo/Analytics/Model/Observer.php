@@ -170,9 +170,10 @@ class Metrilo_Analytics_Model_Observer
         $helper = Mage::helper('metrilo_analytics');
         $item = $observer->getQuoteItem();
         $product = $item->getProduct();
+        $productSku = $product->getSku();
 
         $data = array(
-            'id' => $product->getSku() ? $product->getSku() : $product->getId()
+            'id' => $productSku ? $productSku : $product->getId()
         );
 
         $helper->addEvent('track', 'remove_from_cart', $data);
@@ -274,7 +275,6 @@ class Metrilo_Analytics_Model_Observer
      */
     private function _addToCart($productId, $item, $qty)
     {
-//        $product->getId(), $cartProduct, $item->getQty()
         $helper = Mage::helper('metrilo_analytics');
         $product = Mage::getModel('catalog/product')->load($productId);
 
