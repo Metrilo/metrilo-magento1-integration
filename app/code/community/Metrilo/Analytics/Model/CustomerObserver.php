@@ -18,11 +18,12 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
             $customer = $this->_getCustomerFromEvent($observer);
             if ($customer && $this->_helper->isEnabled($customer->getStoreId())) {
                 if (!trim($customer->getEmail())) {
-                    Mage::log('Customer with id = ' . $customer->getId() . '  has no email address!' . PHP_EOL, null, 'Metrilo_Analytics.log');
+                    $errorMsg = 'Customer with id = ' . $customer->getId() . '  has no email address!';
+                    $this->_helper->logError('CustomerObserver', $errorMsg);
                     return;
                 }
                 
-                $client             = Mage::helper('metrilo_analytics/apiclient')->getClient($this->_helper->getStoreId());
+                $client             = Mage::helper('metrilo_analytics/apiclient')->getClient($customer->getStoreId());
                 $serializedCustomer = $this->_customerSerializer->serialize($customer);
                 $client->customer($serializedCustomer);
             }
