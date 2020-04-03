@@ -1,15 +1,15 @@
 <?php
 class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
 {
-    private $_customerModel;
-    private $_customerSerializer;
     private $_helper;
+    private $_customerSerializer;
+    private $_customerModel;
     
     public function _construct()
     {
-        $this->_customerModel      = Mage::getModel('customer/customer');
-        $this->_customerSerializer = Mage::helper('metrilo_analytics/customerSerializer');
         $this->_helper             = Mage::helper('metrilo_analytics');
+        $this->_customerSerializer = Mage::helper('metrilo_analytics/customerSerializer');
+        $this->_customerModel      = Mage::getModel('customer/customer');
     }
     
     public function customerUpdate($observer)
@@ -27,7 +27,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                 $client->customer($serializedCustomer);
             }
         } catch (Exception $e) {
-            Mage::log(json_encode(array('CustomerObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            $this->_helper->logError('CustomerObserver', $e);
         }
     }
     

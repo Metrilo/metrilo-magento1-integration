@@ -19,7 +19,7 @@ class Metrilo_Analytics_Model_AddToCartObserver extends Varien_Event_Observer
             $addToCartEvent = new Metrilo_Analytics_Helper_Events_AddToCart($observer->getEvent());
             $this->_sessionEvents->addSessionEvent($addToCartEvent->callJs());
         } catch (Exception $e) {
-            Mage::log(json_encode(array('AddToCartObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            $this->_helper->logError('AddToCartObserver', $e);
         }
     }
 }

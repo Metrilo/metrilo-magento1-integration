@@ -38,7 +38,7 @@ class Metrilo_Analytics_Model_IdentifyCustomerObserver extends Varien_Event_Obse
                 $this->_sessionEvents->addSessionEvent($identifyCustomerEvent->callJs());
             }
         } catch (Exception $e) {
-            Mage::log(json_encode(array('IdentifyCustomerObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            $this->_helper->logError('IdentifyCustomerObserver', $e);
         }
     }
 }

@@ -57,4 +57,23 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         
         return array_keys($storeIdConfigMap);
     }
+    
+    public function logError($file, $exception)
+    {
+        if ($exception instanceof \Exception) {
+            $this->log($file, $exception->getMessage());
+        } else {
+            $this->log($file, $exception);
+        }
+    }
+    
+    private function log($file, $exception)
+    {
+        $logLocation = BP . '/var/log/Metrilo_Analytics.log';
+        if (file_exists($logLocation) && filesize($logLocation) > 10 * 1024 * 1024) {
+            unlink($logLocation);
+        }
+        
+        Mage::log(json_encode(array($file . ' error: ' => $exception)) . PHP_EOL, null, 'Metrilo_Analytics.log');
+    }
 }

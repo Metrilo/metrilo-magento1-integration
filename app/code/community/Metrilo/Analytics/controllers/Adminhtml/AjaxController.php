@@ -1,6 +1,9 @@
 <?php
 class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controller_Action
 {
+    private $_helper;
+    private $_activityHelper;
+    private $_clientObject;
     private $_customerObject;
     private $_categoryObject;
     private $_deletedProductOrderObject;
@@ -9,11 +12,14 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
     
     public function _construct()
     {
-        $this->_customerObject            = Mage::getSingleton('metrilo_analytics/customerData');
-        $this->_categoryObject            = Mage::getSingleton('metrilo_analytics/categoryData');
-        $this->_deletedProductOrderObject = Mage::getSingleton('metrilo_analytics/deletedProductData');
-        $this->_productObject             = Mage::getSingleton('metrilo_analytics/productData');
-        $this->_orderObject               = Mage::getSingleton('metrilo_analytics/orderData');
+        $this->_helper                    = Mage::helper('metrilo_analytics');
+        $this->_activityHelper            = Mage::helper('metrilo_analytics/activity');
+        $this->_clientObject              = Mage::helper('metrilo_analytics/apiClient');
+        $this->_customerObject            = Mage::getModel('metrilo_analytics/customerData');
+        $this->_categoryObject            = Mage::getModel('metrilo_analytics/categoryData');
+        $this->_deletedProductOrderObject = Mage::getModel('metrilo_analytics/deletedProductData');
+        $this->_productObject             = Mage::getModel('metrilo_analytics/productData');
+        $this->_orderObject               = Mage::getModel('metrilo_analytics/orderData');
     }
     
     private function _serializeRecords($records, $serializer) {
@@ -32,19 +38,17 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
     {
         $result            = array();
         $result['success'] = false;
-        $activityHelper    = Mage::helper('metrilo_analytics/activity');
-        $clientObject      = Mage::helper('metrilo_analytics/apiclient');
         
         try {
             $storeId    = (int)$this->getRequest()->getParam('storeId');
             $chunkId    = (int)$this->getRequest()->getParam('chunkId');
             $importType = (string)$this->getRequest()->getParam('importType');
-            $client     = $clientObject->getClient($storeId);
+            $client     = $this->_clientObject->getClient($storeId);
             
             switch($importType) {
                 case 'customers':
                     if ($chunkId == 0) {
-                        $activityHelper->createActivity($storeId, 'import_start');
+                        $this->_activityHelper->createActivity($storeId, 'import_start');
                     }
                     $serializedCustomers = $this->_serializeRecords($this->_customerObject->getCustomers($storeId, $chunkId), Mage::helper('metrilo_analytics/customerSerializer'));
                     // Unlike m2 where every customer has been assigned to specific store (storeview), in m1 customers created
@@ -76,7 +80,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                     $serializedOrders = $this->_serializeRecords($this->_orderObject->getOrders($storeId, $chunkId), Mage::helper('metrilo_analytics/orderSerializer'));
                     $result['success'] = $client->orderBatch($serializedOrders); //disable to reduce api call spam to production project.
                     if ($chunkId == (int)$this->getRequest()->getParam('ordersChunks') - 1) {
-                        $activityHelper->createActivity($storeId, 'import_end');
+                        $this->_activityHelper->createActivity($storeId, 'import_end');
                     }
                     break;
                 default:
@@ -85,13 +89,8 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
             }
             $result['success'] = true;
         } catch (Exception $e) {
-            Mage::log(json_encode(array('AjaxController error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            $this->_helper->logError('AjaxController', $e);
         }
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
-    }
-
-    protected function _isAllowed()
-    {
-        return true;
     }
 }

@@ -1,15 +1,15 @@
 <?php
 class Metrilo_Analytics_Model_CategoryObserver extends Varien_Event_Observer
 {
+    private $_helper;
     private $_categorySerializer;
     private $_categoryData;
-    private $_helper;
     
     public function _construct()
     {
+        $this->_helper             = Mage::helper('metrilo_analytics');
         $this->_categorySerializer = Mage::helper('metrilo_analytics/categorySerializer');
         $this->_categoryData       = Mage::getModel('metrilo_analytics/categoryData');
-        $this->_helper             = Mage::helper('metrilo_analytics');
     }
     
     public function categoryUpdate($observer)
@@ -33,7 +33,7 @@ class Metrilo_Analytics_Model_CategoryObserver extends Varien_Event_Observer
                 $client->category($serializedCategory);
             }
         } catch (Exception $e) {
-            Mage::log(json_encode(array('CategoryObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            $this->_helper->logError('CategoryObserver', $e);
         }
     }
 }

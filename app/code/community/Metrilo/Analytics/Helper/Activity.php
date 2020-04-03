@@ -1,16 +1,22 @@
 <?php
 class Metrilo_Analytics_Helper_Activity extends Mage_Core_Helper_Abstract
 {
+    private $_helper;
+    private $_apiClient;
+    
+    public function _construct()
+    {
+        $this->_helper    = Mage::helper('metrilo_analytics');
+        $this->_apiClient = Mage::helper('metrilo_analytics/apiClient');
+    }
+    
     public function createActivity($storeId, $type)
     {
         try {
-            $helper    = Mage::helper('metrilo_analytics');
-            $apiClient = Mage::helper('metrilo_analytics/apiclient');
-    
-            $token     = $helper->getApiToken($storeId);
-            $secret    = $helper->getApiSecret($storeId);
-            $endPoint  = $helper->getActivityEndpoint();
-            $client    = $apiClient->getClient($storeId);
+            $token     = $this->_helper->getApiToken($storeId);
+            $secret    = $this->_helper->getApiSecret($storeId);
+            $endPoint  = $this->_helper->getActivityEndpoint();
+            $client    = $this->_apiClient->getClient($storeId);
     
             $data = array(
                 'type'          => $type,
@@ -22,7 +28,7 @@ class Metrilo_Analytics_Helper_Activity extends Mage_Core_Helper_Abstract
     
             return $client->createActivity($url, $data);
         } catch (Exception $e) {
-            Mage::log(json_encode(array('ActivityHelper error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            $this->_helper->logError('ActivityHelper', $e);
         }
     }
 }
