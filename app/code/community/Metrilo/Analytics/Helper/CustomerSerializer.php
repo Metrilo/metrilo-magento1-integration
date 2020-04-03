@@ -4,17 +4,13 @@ class Metrilo_Analytics_Helper_CustomerSerializer extends Mage_Core_Helper_Abstr
 {
     public function serialize($customer)
     {
-        $tags             = [];
-        $subscriberStatus = Mage::getModel('newsletter/subscriber')->loadByEmail($customer->getEmail())->isSubscribed();
-        $tags[]           = Mage::getModel('customer/group')->load($customer->getGroupId())->getCustomerGroupCode();
-        
         return [
             'email'      => $customer->getEmail(),
-            'createdAt'  => strtotime($customer->getCreatedAt()),
+            'createdAt'  => $customer->getCreatedAt(),
             'firstName'  => $customer->getFirstname(),
             'lastName'   => $customer->getLastname(),
-            'subscribed' => $subscriberStatus,
-            'tags'       => $tags
+            'subscribed' => $customer->getSubscriberStatus(),
+            'tags'       => $customer->getTags()
         ];
     }
 }

@@ -89,6 +89,11 @@
                         <class>Metrilo_Analytics_Model_IdentifyCustomerObserver</class>
                         <method>identifyCustomer</method>
                     </metrilo_identify_customer_order>
+                    <metrilo_event_customer_update>
+                        <type>singleton</type>
+                        <class>Metrilo_Analytics_Model_CustomerObserver</class>
+                        <method>customerUpdate</method>
+                    </metrilo_event_customer_update>
                 </observers>
             </sales_order_save_after>
             <admin_system_config_changed_section_metrilo_analytics_settings>
