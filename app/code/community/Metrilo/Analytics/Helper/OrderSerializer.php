@@ -40,7 +40,7 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
             'id'        => $order->getIncrementId(),
             'createdAt' => strtotime($order->getCreatedAt()),
             'email'     => $order->getCustomerEmail(),
-            'amount'    => $order->getBaseGrandTotal(),
+            'amount'    => $order->getBaseGrandTotal() - $order->getTotalRefunded(),
             'coupons'   => $couponCode,
             'status'    => $order->getStatus(),
             'products'  => $orderProducts,
