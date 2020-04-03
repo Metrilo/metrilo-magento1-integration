@@ -87,7 +87,7 @@ class Metrilo_Analytics_Api_Client
     
     public function createActivity($url, $data) {
         $connection = new Metrilo_Analytics_Api_Connection();
-        $result     = $connection->post($url, $data);
+        $result     = $connection->post($url, $data, true);
         return $result['code'] == 200;
     }
 }

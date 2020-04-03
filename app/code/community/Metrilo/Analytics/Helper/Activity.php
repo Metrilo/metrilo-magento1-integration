@@ -18,11 +18,10 @@ class Metrilo_Analytics_Helper_Activity extends Mage_Core_Helper_Abstract
             $endPoint  = $this->_helper->getActivityEndpoint();
             $client    = $this->_apiClient->getClient($storeId);
     
-            $data = array(
-                'type'          => $type,
-                'project_token' => $token,
-                'signature'     => md5($token . $type . $secret)
-            );
+            $data = [
+                'type'   => $type,
+                'secret' => $secret
+            ];
     
             $url = $endPoint . '/tracking/' . $token . '/activity';
     
