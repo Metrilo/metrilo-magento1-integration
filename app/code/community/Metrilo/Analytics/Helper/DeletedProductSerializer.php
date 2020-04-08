@@ -23,7 +23,7 @@ class Metrilo_Analytics_Helper_DeletedProductSerializer extends Mage_Core_Helper
                     
                     if ($parentProduct) {
                         $productOptions[] = [
-                            'id'       => $itemId,
+                            'id'       => $itemSku ? $itemSku : $itemId,
                             'sku'      => $itemSku,
                             'name'     => $itemName,
                             'price'    => $parentProduct->getPrice(),
@@ -43,11 +43,11 @@ class Metrilo_Analytics_Helper_DeletedProductSerializer extends Mage_Core_Helper
                 
                 $productBatch[] = [
                     'categories' => [],
-                    'id'         => ($parentProduct) ? $parentProduct->getProductId() : $itemId,
+                    'id'         => $parentProduct ? $parentProduct->getProductId() : $itemId,
                     'sku'        => $itemSku,
                     'imageUrl'   => '',
-                    'name'       => ($parentProduct) ? $parentProduct->getName() : $itemName,
-                    'price'      => ($parentProduct) ? 0 : $item->getPrice(),
+                    'name'       => $parentProduct ? $parentProduct->getName() : $itemName,
+                    'price'      => $parentProduct ? 0 : $item->getPrice(),
                     'url'        => '',
                     'options'    => $productOptions
                 ];

@@ -15,8 +15,10 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
             if ($itemType == 'configurable' || $itemType == 'bundle') { // exclude configurable/bundle parent product returned by getAllItems() method
                 continue;
             }
+    
+            $orderItemSku = $orderItem->getData('sku');
             $orderProducts[] = [
-                'productId' => $orderItem->getProductId(),
+                'productId' => $orderItemSku ? $orderItemSku : $orderItem->getProductId(),
                 'quantity'  => $orderItem->getQtyOrdered()
             ];
         }
