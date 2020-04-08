@@ -47,8 +47,20 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                 break;
             case 'newsletter_subscriber_save_after':
                 $subscriber = $observer->getEvent()->getSubscriber();
-                if ($subscriber->getIsStatusChanged()) {
-                    return $this->metriloCustomer($this->_customerModel->load($subscriber->getCustomerId()));
+                $customerId = $subscriber->getCustomerId();
+                if ($subscriber->getIsStatusChanged() && $customerId !== 0) {
+                    return $this->metriloCustomer($this->_customerModel->load($customerId));
+                } else {
+                    $subscriberEmail = $subscriber->getEmail();
+                    return new MetriloCustomer(
+                        $subscriber->getStoreId(),
+                        $subscriberEmail,
+                        strtotime($subscriber->getData('change_status_at')) * 1000,
+                        $subscriberEmail,
+                        $subscriberEmail,
+                        true,
+                        ['guest_customer']
+                    );
                 }
                 
                 break;
@@ -64,7 +76,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                     $observer->getEvent()->getOrder()->getBillingAddress()->getData('firstname'),
                     $observer->getEvent()->getOrder()->getBillingAddress()->getData('lastname'),
                     true,
-                    ['guestCustomer']
+                    ['guest_customer']
                 );
             default:
                 break;
