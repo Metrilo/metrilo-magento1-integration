@@ -5,7 +5,8 @@ class Metrilo_Analytics_Helper_ProductSerializer extends Mage_Core_Helper_Abstra
     {
         $productImageUrlHelper = Mage::helper('metrilo_analytics/productImageUrl');
         $productOptionsHelper  = Mage::helper('metrilo_analytics/productOptions');
-        $productId = $product->getId();
+        $productId             = $product->getId();
+        $specialPrice          = $product->getSpecialPrice();
         
         if ($product->getTypeId() === 'simple' && $productOptionsHelper->getParentIds($productId) != []) {
             return;
@@ -27,7 +28,7 @@ class Metrilo_Analytics_Helper_ProductSerializer extends Mage_Core_Helper_Abstra
             'sku'        => $product->getSku(),
             'imageUrl'   => $imageUrl,
             'name'       => $product->getName(),
-            'price'      => $price,
+            'price'      => $specialPrice ? $specialPrice : $price,
             'url'        => $url,
             'options'    => $productOptions
         ];

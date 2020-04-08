@@ -21,7 +21,7 @@ class Metrilo_Analytics_Model_ProductData extends Mage_Core_Model_Abstract
                         ->getCollection()
                         ->addStoreFilter($storeId)
                         ->addFieldToFilter('visibility', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
-                        ->addAttributeToSelect(['entity_id','type_id','sku','created_at','updated_at','name','image','price','url_path', 'visibility']);
+                        ->addAttributeToSelect(['entity_id','type_id','sku','created_at','updated_at','name','image','price', 'special_price', 'url_path', 'visibility']);
     }
     
     public function getProductWithRequestPath($productId, $storeId) {
