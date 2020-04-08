@@ -16,7 +16,9 @@ class Metrilo_Analytics_Model_OrderObserver extends Varien_Event_Observer
             $client          = Mage::helper('metrilo_analytics/apiClient')->getClient($this->_helper->getStoreId());
             $order           = $observer->getOrder();
             $serializedOrder = $this->_orderSerializer->serialize($order);
-            $client->order($serializedOrder);
+            if ($serializedOrder) {
+                $client->order($serializedOrder);
+            }
         } catch (Exception $e) {
             $this->_helper->logError('OrderObserver', $e);
         }

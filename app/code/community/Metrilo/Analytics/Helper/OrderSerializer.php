@@ -22,6 +22,7 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
         }
     
         $orderBillingData = $order->getBillingAddress();
+        $orderPhone       = $orderBillingData->getTelephone();
         $street           = $orderBillingData->getStreet();
         $couponCode       = $order->getCouponCode() ? [$order->getCouponCode()] : [];
     
@@ -31,15 +32,23 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
             "address"       => is_array($street) ? implode(PHP_EOL, $street) : $street,
             "city"          => $orderBillingData->getCity(),
             "countryCode"   => $orderBillingData->getCountryId(),
-            "phone"         => $orderBillingData->getTelephone(),
+            "phone"         => $orderPhone,
             "postcode"      => $orderBillingData->getPostcode(),
             "paymentMethod" => $order->getPayment()->getMethodInstance()->getTitle()
         ];
+        
+        if (!empty($order->getCustomerEmail())) {
+            $customerEmail = $order->getCustomerEmail();
+        } elseif (!empty($orderPhone)) {
+            $customerEmail = $orderPhone . '@phone_email';
+        } else {
+            return false;
+        }
     
         return [
             'id'        => $order->getIncrementId(),
             'createdAt' => strtotime($order->getCreatedAt()),
-            'email'     => $order->getCustomerEmail(),
+            'email'     => $customerEmail,
             'amount'    => $order->getBaseGrandTotal() - $order->getTotalRefunded(),
             'coupons'   => $couponCode,
             'status'    => $order->getStatus(),
