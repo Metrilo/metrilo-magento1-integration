@@ -1,11 +1,11 @@
 <?php
-class Metrilo_Analytics_Helper_Apiclient extends Mage_Core_Helper_Abstract
+class Metrilo_Analytics_Helper_ApiClient extends Mage_Core_Helper_Abstract
 {
     private $_helper;
     
     public function _construct()
     {
-        $this->_helper    = Mage::helper('metrilo_analytics');
+        $this->_helper = Mage::helper('metrilo_analytics');
     }
     
     public function getClient($storeId)

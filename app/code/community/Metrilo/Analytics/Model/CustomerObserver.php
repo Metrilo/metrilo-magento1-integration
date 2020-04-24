@@ -27,7 +27,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                     return;
                 }
                 
-                $client             = Mage::helper('metrilo_analytics/apiclient')->getClient($customer->getStoreId());
+                $client             = Mage::helper('metrilo_analytics/apiClient')->getClient($customer->getStoreId());
                 $serializedCustomer = $this->_customerSerializer->serialize($customer);
                 $client->customer($serializedCustomer);
             }

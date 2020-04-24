@@ -27,7 +27,7 @@ class Metrilo_Analytics_Model_CategoryObserver extends Varien_Event_Observer
                 $categoryStoreIds[] = $categoryStoreId;
             }
             foreach ($categoryStoreIds as $storeId) {
-                $client             = Mage::helper('metrilo_analytics/apiclient')->getClient($storeId);
+                $client             = Mage::helper('metrilo_analytics/apiClient')->getClient($storeId);
                 $categoryObject     = $this->_categoryData->getCategoryWithRequestPath($category->getId(), $storeId);
                 $serializedCategory = $this->_categorySerializer->serialize($categoryObject);
                 $client->category($serializedCategory);
