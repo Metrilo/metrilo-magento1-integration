@@ -134,7 +134,11 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     private function getProductDetails($item) {
-        $product = $item->getProduct();
+        if (Mage::getVersion() < '1.7') {
+            $product = Mage::getModel('catalog/product')->load($item->getProductId());
+        } else {
+            $product = $item->getProduct(); //getProduct() is missing in versions older than (1.7.0.0)
+        }
 
         $details = array(
             'id'    => (string)$item->getProductId(),
@@ -350,11 +354,12 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     private function _buildCall($storeId, $ordersForSubmition) {
+        $edition = (Mage::getVersion() < '1.7') ? '' : Mage::getEdition();
         return array(
             'token'    => $this->getApiToken($storeId),
             'events'   => $ordersForSubmition,
             // for debugging/support purposes
-            'platform' => 'Magento ' . Mage::getEdition() . ' ' . Mage::getVersion(),
+            'platform' => 'Magento ' . $edition . ' ' . Mage::getVersion(), //getEdition() is missing in systems older than 1.7.0.0
             'version'  => (string)Mage::getConfig()->getModuleConfig("Metrilo_Analytics")->version
         );
     }
