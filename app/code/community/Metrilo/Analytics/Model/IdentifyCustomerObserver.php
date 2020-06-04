@@ -10,7 +10,8 @@ class Metrilo_Analytics_Model_IdentifyCustomerObserver extends Varien_Event_Obse
         $this->_sessionEvents = Mage::helper('metrilo_analytics/sessionEvents');
     }
     
-    private function getEventEmail($observer) {
+    private function getEventEmail($observer)
+    {
         switch ($observer->getEvent()->getName()) {
             // identify on customer login action
             case 'customer_login':

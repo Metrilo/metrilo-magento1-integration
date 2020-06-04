@@ -22,7 +22,8 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
         $this->_orderObject               = Mage::getModel('metrilo_analytics/orderData');
     }
     
-    private function _serializeRecords($records, $serializer) {
+    private function _serializeRecords($records, $serializer)
+    {
         $serializedData = [];
         foreach($records as $record) {
             $serializedRecord = $serializer->serialize($record);
@@ -50,35 +51,52 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                     if ($chunkId == 0) {
                         $this->_activityHelper->createActivity($storeId, 'import_start');
                     }
-                    $serializedCustomers = $this->_serializeRecords($this->_customerObject->getCustomers($storeId, $chunkId), Mage::helper('metrilo_analytics/customerSerializer'));
-                    // Unlike m2 where every customer has been assigned to specific store (storeview), in m1 customers created
-                    // via admin have admin storeId (0) as value witch makes it impossible to map these customers to theirs
-                    // respective store views (since all admin created accounts will have storeId value of 0). Also admin
-                    // created accounts can be assigned to admin website witch makes it impossible for the account to login on
+                    $serializedCustomers = $this->_serializeRecords(
+                        $this->_customerObject->getCustomers($storeId, $chunkId),
+                        Mage::helper('metrilo_analytics/customerSerializer')
+                    );
+                    // Unlike m2 where every customer has been assigned to specific store (storeview), in m1 customers
+                    // created via admin have admin storeId (0) as value witch makes it impossible to map these
+                    // customers to theirs respective store views
+                    // (since all admin created accounts will have storeId value of 0). Also admin created accounts
+                    // can be assigned to admin website witch makes it impossible for the account to login on
                     // the front-end but makes it possible to create orders for that account via admin :(
                     $result['success']   = $client->customerBatch($serializedCustomers);
                     break;
                 case 'categories':
-                    $serializedCategories = $this->_serializeRecords($this->_categoryObject->getCategories($storeId, $chunkId), Mage::helper('metrilo_analytics/categorySerializer'));
+                    $serializedCategories = $this->_serializeRecords(
+                        $this->_categoryObject->getCategories($storeId, $chunkId),
+                        Mage::helper('metrilo_analytics/categorySerializer')
+                    );
                     $result['success']    = $client->categoryBatch($serializedCategories);
                     break;
                 case 'deletedProducts':
                     $deletedProductOrders = $this->_deletedProductOrderObject->getDeletedProductOrders($storeId);
                     if ($deletedProductOrders) {
-                        $serializedDeletedProducts = Mage::helper('metrilo_analytics/deletedproductserializer')->serialize($deletedProductOrders);
-                        $deletedProductChunks      = array_chunk($serializedDeletedProducts, Metrilo_Analytics_Helper_Data::chunkItems);
+                        $serializedDeletedProducts = Mage::helper('metrilo_analytics/deletedproductserializer')
+                                                        ->serialize($deletedProductOrders);
+                        $deletedProductChunks      = array_chunk(
+                            $serializedDeletedProducts,
+                            Metrilo_Analytics_Helper_Data::CHUNK_ITEMS
+                        );
                         foreach($deletedProductChunks as $chunk) {
                             $client->productBatch($chunk);
                         }
                     }
                     break;
                 case 'products':
-                    $serializedProducts = $this->_serializeRecords($this->_productObject->getProducts($storeId, $chunkId), Mage::helper('metrilo_analytics/productSerializer'));
+                    $serializedProducts = $this->_serializeRecords(
+                        $this->_productObject->getProducts($storeId, $chunkId),
+                        Mage::helper('metrilo_analytics/productSerializer')
+                    );
                     $result['success'] = $client->productBatch($serializedProducts);
                     break;
                 case 'orders':
-                    $serializedOrders = $this->_serializeRecords($this->_orderObject->getOrders($storeId, $chunkId), Mage::helper('metrilo_analytics/orderSerializer'));
-                    $result['success'] = $client->orderBatch($serializedOrders); //disable to reduce api call spam to production project.
+                    $serializedOrders = $this->_serializeRecords(
+                        $this->_orderObject->getOrders($storeId, $chunkId),
+                        Mage::helper('metrilo_analytics/orderSerializer')
+                    );
+                    $result['success'] = $client->orderBatch($serializedOrders);
                     if ($chunkId == (int)$this->getRequest()->getParam('ordersChunks') - 1) {
                         $this->_activityHelper->createActivity($storeId, 'import_end');
                     }

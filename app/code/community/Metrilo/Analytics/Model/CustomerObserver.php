@@ -1,4 +1,5 @@
 <?php
+
 class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
 {
     private $_helper;
@@ -36,12 +37,21 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
         }
     }
     
-    private function _getCustomerFromEvent($observer) {
+    private function _getCustomerFromEvent($observer)
+    {
         switch ($observer->getEvent()->getName()) {
             case 'customer_save_after':
                 $customer = $observer->getEvent()->getCustomer();
                 if ($customer->hasDataChanges()) {
-                    return $this->metriloCustomer($customer);
+                    return new Metrilo_Analytics_Helper_MetriloCustomer(
+                        $customer->getStoreId(),
+                        $customer->getEmail(),
+                        strtotime($customer->getCreatedAt()) * 1000,
+                        $customer->getData('firstname'),
+                        $customer->getData('lastname'),
+                        $this->getCustomerSubscriberStatus($customer->getId()),
+                        $this->getCustomerGroup($customer->getGroupId())
+                    );
                 }
                 
                 break;
@@ -52,7 +62,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                     return $this->metriloCustomer($this->_customerModel->load($customerId));
                 } else {
                     $subscriberEmail = $subscriber->getEmail();
-                    return new MetriloCustomer(
+                    return new Metrilo_Analytics_Helper_MetriloCustomer(
                         $subscriber->getStoreId(),
                         $subscriberEmail,
                         strtotime($subscriber->getData('change_status_at')) * 1000,
@@ -69,7 +79,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                 
                 break;
             case 'sales_order_save_after':
-                return new MetriloCustomer(
+                return new Metrilo_Analytics_Helper_MetriloCustomer(
                     $observer->getEvent()->getOrder()->getStoreId(),
                     $observer->getEvent()->getOrder()->getCustomerEmail(),
                     strtotime($observer->getEvent()->getOrder()->getCreatedAt()) * 1000,
@@ -85,7 +95,8 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
         return false;
     }
     
-    private function metriloCustomer($customer) {
+    private function metriloCustomer($customer)
+    {
         return new Metrilo_Analytics_Helper_MetriloCustomer(
             $customer->getStoreId(),
             $customer->getEmail(),
@@ -97,11 +108,13 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
         );
     }
     
-    private function getCustomerSubscriberStatus($customerEmail) {
+    private function getCustomerSubscriberStatus($customerEmail)
+    {
         return $this->_subscriberModel->loadByEmail($customerEmail)->isSubscribed();
     }
     
-    private function getCustomerGroup($groupId) {
+    private function getCustomerGroup($groupId)
+    {
         $group       = $this->_customerGroupModel->load($groupId)->getCustomerGroupCode();
         $groupName[] = $group->getCode();
         return $groupName;

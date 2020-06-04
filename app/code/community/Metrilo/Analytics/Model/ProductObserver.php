@@ -38,7 +38,11 @@ class Metrilo_Analytics_Model_ProductObserver extends Varien_Event_Observer
                 }
             }
         } catch (Exception $e) {
-            Mage::log(json_encode(array('ProductObserver error: ' => $e->getMessage())) . PHP_EOL, null, 'Metrilo_Analytics.log');
+            Mage::log(
+                json_encode(array('ProductObserver error: ' => $e->getMessage())) . PHP_EOL,
+                null,
+                'Metrilo_Analytics.log'
+            );
         }
     }
 }

@@ -13,7 +13,13 @@ class Metrilo_Analytics_Helper_ApiClient extends Mage_Core_Helper_Abstract
             $platform       = 'Magento ' . $edition . ' ' . Mage::getVersion();
             $pluginVersion  = (string)Mage::getConfig()->getModuleConfig("Metrilo_Analytics")->version;
             $apiEndpoint    = $this->_helper->getApiEndpoint();
-            return new Metrilo_Analytics_Api_Client($token, $platform, $pluginVersion, $apiEndpoint, Mage::getBaseDir('log'));
+            return new Metrilo_Analytics_Api_Client(
+                $token,
+                $platform,
+                $pluginVersion,
+                $apiEndpoint,
+                Mage::getBaseDir('log')
+            );
         } catch (Exception $e) {
             $this->_helper->logError('ApiClientHelper', $e);
         }

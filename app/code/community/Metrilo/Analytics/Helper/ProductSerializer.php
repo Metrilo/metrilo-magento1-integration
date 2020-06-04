@@ -12,8 +12,10 @@ class Metrilo_Analytics_Helper_ProductSerializer extends Mage_Core_Helper_Abstra
             return;
         }
     
-        $imageUrl = (!empty($product->getImage())) ? $productImageUrlHelper->getProductImageUrl($product->getImage()) : '';
-        $price    = (!empty($product->getPrice())) ? $product->getPrice() : 0; // Does not return grouped/bundled parent price
+        $imageUrl = (!empty($product->getImage())) ?
+            $productImageUrlHelper->getProductImageUrl($product->getImage()) : '';
+        // Does not return grouped/bundled parent price
+        $price    = (!empty($product->getPrice())) ? $product->getPrice() : 0;
         $url      = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . $product->getUrlPath();
     
         if ($product->isConfigurable()) {

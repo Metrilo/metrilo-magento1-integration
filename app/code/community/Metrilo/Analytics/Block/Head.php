@@ -24,7 +24,7 @@ class Metrilo_Analytics_Block_Head extends Mage_Core_Block_Template
     public function getEvent()
     {
         $actionName = Mage::app()->getFrontController()->getAction()->getFullActionName();
-        switch($actionName) {
+        switch ($actionName) {
             // product view pages
             case 'catalog_product_view':
                 return Mage::helper('metrilo_analytics/events_productView')->callJs();
@@ -49,14 +49,17 @@ class Metrilo_Analytics_Block_Head extends Mage_Core_Block_Template
         }
     }
     
-    public function getEvents() {
+    public function getEvents()
+    {
         $sessionEvents   = $this->_sessionEvents->getSessionEvents();
         $sessionEvents[] = $this->getEvent();
         return $sessionEvents;
     }
     
-    public function getLibraryUrl() {
-        return $this->_helper->getApiEndpoint() . '/tracking.js?token=' . $this->_helper->getApiToken($this->_helper->getStoreId());
+    public function getLibraryUrl()
+    {
+        return $this->_helper->getApiEndpoint() . '/tracking.js?token=' .
+            $this->_helper->getApiToken($this->_helper->getStoreId());
     }
 
     /**

@@ -10,7 +10,8 @@ class Metrilo_Analytics_Helper_Events_IdentifyCustomer extends Mage_Core_Helper_
         $this->_email = $email;
     }
     
-    public function callJS() {
+    public function callJS()
+    {
         return 'window.metrilo.identify("' . $this->_email . '");';
     }
 }

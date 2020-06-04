@@ -14,15 +14,8 @@ class Metrilo_Analytics_Api_Client
         $this->_validator                      = new Metrilo_Analytics_Api_Validator($logPath);
     }
     
-    public function backendCall($path, $body) {
-        $connection                   = new Metrilo_Analytics_Api_Connection();
-        $this->_backendParams['time'] = round(microtime(true) * 1000);
-        $body                         = array_merge($body, $this->_backendParams);
-        
-        return $connection->post($this->_endpoint.$path, $body);
-    }
-    
-    public function customer($customer) {
+    public function customer($customer)
+    {
         $validCustomer = $this->_validator->validateCustomer($customer);
         
         if ($validCustomer) {
@@ -30,7 +23,8 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function customerBatch($customers) {
+    public function customerBatch($customers)
+    {
         $validCustomers = $this->_validator->validateCustomers($customers);
         
         if (!empty($validCustomers)) {
@@ -38,7 +32,8 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function category($category) {
+    public function category($category)
+    {
         $validCategory = $this->_validator->validateCategory($category);
         
         if ($validCategory) {
@@ -46,14 +41,17 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function categoryBatch($categories) {
+    public function categoryBatch($categories)
+    {
         $validCategories = $this->_validator->validateCategories($categories);
         
         if (!empty($validCategories)) {
             return $this->backendCall('/category/batch', ['batch' => $validCategories]);
         }
     }
-    public function product($product) {
+    
+    public function product($product)
+    {
         $validProduct = $this->_validator->validateProduct($product);
         
         if ($validProduct) {
@@ -61,7 +59,8 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function productBatch($products) {
+    public function productBatch($products)
+    {
         $validProducts = $this->_validator->validateProducts($products);
         
         if (!empty($validProducts)) {
@@ -69,7 +68,8 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function order($order) {
+    public function order($order)
+    {
         $validOrder = $this->_validator->validateOrder($order);
         
         if ($validOrder) {
@@ -77,7 +77,8 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function orderBatch($orders) {
+    public function orderBatch($orders)
+    {
         $validOrders = $this->_validator->validateOrders($orders);
         
         if (!empty($validOrders)) {
@@ -85,9 +86,19 @@ class Metrilo_Analytics_Api_Client
         }
     }
     
-    public function createActivity($url, $data) {
+    public function createActivity($url, $data)
+    {
         $connection = new Metrilo_Analytics_Api_Connection();
         $result     = $connection->post($url, $data, true);
         return $result['code'] == 200;
+    }
+    
+    private function backendCall($path, $body)
+    {
+        $connection                   = new Metrilo_Analytics_Api_Connection();
+        $this->_backendParams['time'] = round(microtime(true) * 1000);
+        $body                         = array_merge($body, $this->_backendParams);
+        
+        return $connection->post($this->_endpoint.$path, $body);
     }
 }

@@ -10,73 +10,8 @@ class Metrilo_Analytics_Api_Validator
         $this->_logPath = $logPath . '/MetriloApiValidationErrors.log';
     }
     
-    public function check($var){
-        $this->var = $var;
-        
-        return $this;
-    }
-    
-    public function value($value){
-        $this->value = $value;
-        
-        return $this;
-    }
-    
-    public function required(){
-        if($this->value === '' || $this->value === null || $this->value === []){
-            $this->errors[] = 'Field ' . $this->var . ' is required. ';
-        }
-        
-        return $this;
-    }
-    
-    public function isSuccess(){
-        if(empty($this->errors)) return true;
-    }
-    
-    public function getErrors(){
-        if(!$this->isSuccess()) return $this->errors;
-    }
-    
-    public function isString(){
-        if(!is_string($this->value)) {
-            $this->errors[] = 'Field ' . $this->var . ' is not String type. ';
-        }
-        
-        return $this;
-    }
-    
-    public function isInt(){
-        if(!is_int($this->value)) {
-            $this->errors[] = 'Field ' . $this->var . ' is not Integer type. ';
-        }
-        
-        return $this;
-    }
-    
-    public function isEmail(){
-        if(!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = 'Field ' . $this->var . ' is not a valid email address. ';
-        }
-        
-        return $this;
-    }
-    
-    public function isNumeric(){
-        if(!is_numeric($this->value)) {
-            $this->errors[] = 'Field ' . $this->var . ' is not Number. ';
-        }
-        
-        return $this;
-    }
-    
-    public function logger($error) {
-        $validationErrors = implode("| ", $this->getErrors());
-        $error           .= $validationErrors;
-        return error_log($error . PHP_EOL, 3, $this->_logPath);
-    }
-    
-    public function validateCustomer($customer) {
+    public function validateCustomer($customer)
+    {
         $this->check('email')->value($customer['email'])->required()->isString()->isEmail();
         $this->check('createdAt')->value($customer['createdAt'])->required()->isInt();
         
@@ -90,7 +25,8 @@ class Metrilo_Analytics_Api_Validator
         }
     }
     
-    public function validateCustomers($customers = []) {
+    public function validateCustomers($customers = [])
+    {
         $validCustomers = [];
         foreach ($customers as $customer) {
             $validCustomer = $this->validateCustomer($customer);
@@ -102,7 +38,8 @@ class Metrilo_Analytics_Api_Validator
         return $validCustomers;
     }
     
-    public function validateCategory($category) {
+    public function validateCategory($category)
+    {
         $this->check('id')->value($category['id'])->required()->isString();
         $this->check('name')->value($category['name'])->required()->isString();
         
@@ -116,7 +53,8 @@ class Metrilo_Analytics_Api_Validator
         }
     }
     
-    public function validateCategories($categories = []) {
+    public function validateCategories($categories = [])
+    {
         $validCategories = [];
         foreach ($categories as $category) {
             $validCategory = $this->validateCategory($category);
@@ -128,7 +66,8 @@ class Metrilo_Analytics_Api_Validator
         return $validCategories;
     }
     
-    public function validateProduct($product) {
+    public function validateProduct($product)
+    {
         foreach ($product['categories'] as $category) {
             $this->check('categoryId')->value($category)->required()->isString();
         }
@@ -155,7 +94,8 @@ class Metrilo_Analytics_Api_Validator
         }
     }
     
-    public function validateProducts($products = []) {
+    public function validateProducts($products = [])
+    {
         $validProducts = [];
         foreach ($products as $product) {
             $validProduct = $this->validateProduct($product);
@@ -167,7 +107,8 @@ class Metrilo_Analytics_Api_Validator
         return $validProducts;
     }
     
-    public function validateOrder($order) {
+    public function validateOrder($order)
+    {
         $this->check('orderId')->value($order['id'])->required()->isString();
         $this->check('createdAt')->value($order['createdAt'])->required()->isInt();
         $this->check('amount')->value($order['amount'])->required()->isNumeric();
@@ -189,7 +130,8 @@ class Metrilo_Analytics_Api_Validator
         }
     }
     
-    public function validateOrders($orders = []) {
+    public function validateOrders($orders = [])
+    {
         $validOrders = [];
         foreach ($orders as $order) {
             $validOrder = $this->validateOrder($order);
@@ -199,5 +141,81 @@ class Metrilo_Analytics_Api_Validator
         }
         
         return $validOrders;
+    }
+    
+    private function check($var)
+    {
+        $this->var = $var;
+        
+        return $this;
+    }
+    
+    private function value($value)
+    {
+        $this->value = $value;
+        
+        return $this;
+    }
+    
+    private function required()
+    {
+        if($this->value === '' || $this->value === null || $this->value === []){
+            $this->errors[] = 'Field ' . $this->var . ' is required. ';
+        }
+        
+        return $this;
+    }
+    
+    private function isSuccess()
+    {
+        if(empty($this->errors)) return true;
+    }
+    
+    private function getErrors()
+    {
+        if(!$this->isSuccess()) return $this->errors;
+    }
+    
+    private function isString()
+    {
+        if(!is_string($this->value)) {
+            $this->errors[] = 'Field ' . $this->var . ' is not String type. ';
+        }
+        
+        return $this;
+    }
+    
+    private function isInt()
+    {
+        if(!is_int($this->value)) {
+            $this->errors[] = 'Field ' . $this->var . ' is not Integer type. ';
+        }
+        
+        return $this;
+    }
+    
+    private function isEmail()
+    {
+        if(!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
+            $this->errors[] = 'Field ' . $this->var . ' is not a valid email address. ';
+        }
+        
+        return $this;
+    }
+    
+    private function isNumeric()
+    {
+        if(!is_numeric($this->value)) {
+            $this->errors[] = 'Field ' . $this->var . ' is not Number. ';
+        }
+        
+        return $this;
+    }
+    
+    private function logger($error)
+    {
+        $validationErrors = implode("| ", $this->getErrors());
+        $error           .= $validationErrors;
+        return error_log($error . PHP_EOL, 3, $this->_logPath);
     }
 }

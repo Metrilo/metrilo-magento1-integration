@@ -1,7 +1,7 @@
 <?php
 class Metrilo_Analytics_Model_CategoryData extends Mage_Core_Model_Abstract
 {
-    public $chunkItems = Metrilo_Analytics_Helper_Data::chunkItems;
+    public $chunkItems = Metrilo_Analytics_Helper_Data::CHUNK_ITEMS;
     
     public function getCategories($storeId, $chunkId)
     {
@@ -15,8 +15,8 @@ class Metrilo_Analytics_Model_CategoryData extends Mage_Core_Model_Abstract
         return (int)ceil($storeTotal / $this->chunkItems);
     }
     
-    public function getCategoryWithRequestPath($categoryId, $storeId) {
-        
+    public function getCategoryWithRequestPath($categoryId, $storeId)
+    {
         $categoryObject = Mage::getModel('catalog/category')
             ->getCollection()
             ->addAttributeToSelect('name')

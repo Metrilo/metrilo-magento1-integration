@@ -1,9 +1,10 @@
 <?php
 class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const chunkItems = 50;
+    const CHUNK_ITEMS = 50;
     
-    public function getStoreId($request = null) {
+    public function getStoreId($request = null)
+    {
         if ($request) {
             # If request is passed retrieve store by storeCode
             $storeCode = $request->getParam('store');
@@ -45,7 +46,8 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
         return ($activityEndpoint) ? $activityEndpoint : 'https://p.metrilo.com';
     }
     
-    public function getStoreIdsPerProject($storeIds) {
+    public function getStoreIdsPerProject($storeIds)
+    {
         $storeIdConfigMap = [];
         foreach ($storeIds as $storeId) {
             if ($storeId == 0 || !$this->isEnabled($storeId)) { // store 0 is always admin

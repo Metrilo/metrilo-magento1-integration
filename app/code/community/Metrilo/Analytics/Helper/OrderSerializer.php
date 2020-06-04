@@ -12,7 +12,9 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
     
         foreach ($orderItems as $orderItem) {
             $itemType = $orderItem->getProductType();
-            if ($itemType == 'configurable' || $itemType == 'bundle') { // exclude configurable/bundle parent product returned by getAllItems() method
+            
+            // exclude configurable/bundle parent product returned by getAllItems() method
+            if ($itemType == 'configurable' || $itemType == 'bundle') {
                 continue;
             }
     
@@ -53,7 +55,7 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
             'email'     => $customerEmail,
             'amount'    => $order->getBaseGrandTotal() - $order->getTotalRefunded(),
             'coupons'   => $couponCode,
-            'status'    => $order->getStatus(),
+            'status'    => $order->getStatusLabel(),
             'products'  => $orderProducts,
             'billing'   => $orderBilling
         ];

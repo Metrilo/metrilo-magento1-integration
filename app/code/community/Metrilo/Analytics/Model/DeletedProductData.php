@@ -10,7 +10,11 @@ class Metrilo_Analytics_Model_DeletedProductData extends Mage_Core_Model_Abstrac
             ->distinct()
             ->reset(\Zend_Db_Select::COLUMNS)
             ->columns(['order_id'])
-            ->joinLeft(array('catalog' => 'catalog_product_entity'), 'main_table.product_id = catalog.entity_id', array())
+            ->joinLeft(
+                array('catalog' => 'catalog_product_entity'),
+                'main_table.product_id = catalog.entity_id',
+                array()
+            )
             ->where('catalog.entity_id IS NULL')
             ->where('main_table.store_id = ?', $storeId);
         

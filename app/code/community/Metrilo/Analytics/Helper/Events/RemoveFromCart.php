@@ -10,11 +10,15 @@ class Metrilo_Analytics_Helper_Events_RemoveFromCart extends Mage_Core_Helper_Ab
         $this->_event = $event;
     }
     
-    public function callJS() {
-        return "window.metrilo.removeFromCart('" . $this->getItemIdentifier() . "', " . $this->_event->getQuoteItem()->getQty() . ");";
+    public function callJS()
+    {
+        return "window.metrilo.removeFromCart('" .
+            $this->getItemIdentifier() . "', " .
+            $this->_event->getQuoteItem()->getQty() . ");";
     }
     
-    private function getItemIdentifier() {
+    private function getItemIdentifier()
+    {
         $item = $this->_event->getQuoteItem();
         $itemOptions = $item->getChildren();
         

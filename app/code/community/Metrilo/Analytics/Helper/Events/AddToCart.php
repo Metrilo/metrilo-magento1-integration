@@ -10,11 +10,15 @@ class Metrilo_Analytics_Helper_Events_AddToCart extends Mage_Core_Helper_Abstrac
         $this->_event = $event;
     }
     
-    public function callJS() {
-        return "window.metrilo.addToCart('" . $this->getItemIdentifier() . "', " . $this->_event->getQuoteItem()->getQty() . ");";
+    public function callJS()
+    {
+        return "window.metrilo.addToCart('" .
+            $this->getItemIdentifier() . "', " .
+            $this->_event->getQuoteItem()->getQty() . ");";
     }
     
-    private function getItemIdentifier() {
+    private function getItemIdentifier()
+    {
         $item = $this->_event->getQuoteItem();
         $itemOptions = $item->getChildren();
         

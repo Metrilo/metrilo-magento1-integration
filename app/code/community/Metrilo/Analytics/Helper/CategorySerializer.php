@@ -5,10 +5,11 @@ class Metrilo_Analytics_Helper_CategorySerializer extends Mage_Core_Helper_Abstr
     public function serialize($category)
     {
         $requestPathObject = Mage::getSingleton('core/url_rewrite');
-        $categoryId = $category->getId();
+        $categoryId        = $category->getId();
         
         // available only for categories with url key
-        $requestPath = $requestPathObject->getResource()->getRequestPathByIdPath('category/' . $categoryId, $category->getStoreId());
+        $requestPath = $requestPathObject->getResource()
+            ->getRequestPathByIdPath('category/' . $categoryId, $category->getStoreId());
 
         if(!empty($requestPath))
         {

@@ -38,7 +38,7 @@ class Metrilo_Analytics_Api_Connection
      * @param string $method
      * @return void
      */
-    public function curlCall($url, $headers = [], $body = '', $method = "POST")
+    private function curlCall($url, $headers = [], $body = '', $method = "POST")
     {
         
         $curl = curl_init();

@@ -1,7 +1,8 @@
 <?php
 class Metrilo_Analytics_Helper_DeletedProductSerializer extends Mage_Core_Helper_Abstract
 {
-    public function serialize($deletedProductOrders) {
+    public function serialize($deletedProductOrders)
+    {
         $productBatch = [];
         foreach ($deletedProductOrders as $order) {
             
@@ -12,7 +13,7 @@ class Metrilo_Analytics_Helper_DeletedProductSerializer extends Mage_Core_Helper
                 $parentItemId   = $item->getParentItemId();
                 $itemId         = $item->getProductId();
                 $itemSku        = $item->getSku();
-                $itemName       = $item->getname();
+                $itemName       = $item->getName();
                 
                 if ($item->getProductType() == 'configurable' || $this->_checkForProductIdIndex($itemId, $productBatch) !== false) {
                     continue;
@@ -30,12 +31,21 @@ class Metrilo_Analytics_Helper_DeletedProductSerializer extends Mage_Core_Helper
                             'imageUrl' => ''
                         ];
                         
-                        $parentIndex = $this->_checkForProductIdIndex($parentProduct->getProductId(), $productBatch);
+                        $parentIndex = $this->_checkForProductIdIndex(
+                            $parentProduct->getProductId(),
+                            $productBatch
+                        );
                         if ($parentIndex !== false) {
-                            if ($this->_checkForProductIdIndex($itemId, $productBatch[$parentIndex]['options']) !== false) {
+                            if ($this->_checkForProductIdIndex(
+                                    $itemId,
+                                    $productBatch[$parentIndex]['options']
+                                ) !== false) {
                                 continue;
                             }
-                            $productBatch[$parentIndex]['options'] = array_merge($productBatch[$parentIndex]['options'], $productOptions);
+                            $productBatch[$parentIndex]['options'] = array_merge(
+                                $productBatch[$parentIndex]['options'],
+                                $productOptions
+                            );
                             continue;
                         }
                     }

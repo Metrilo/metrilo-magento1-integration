@@ -1,7 +1,7 @@
 <?php
 class Metrilo_Analytics_Model_OrderData extends Mage_Core_Model_Abstract
 {
-    private $chunkItems = Metrilo_Analytics_Helper_Data::chunkItems;
+    private $chunkItems = Metrilo_Analytics_Helper_Data::CHUNK_ITEMS;
     
     public function getOrders($storeId, $chunkId)
     {
