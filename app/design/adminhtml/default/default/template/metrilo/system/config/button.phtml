@@ -79,7 +79,11 @@
                 this.sync_chunk(newChunkId, dataOptions.importType, false);
             } else {
                 if(current == 'orders') {
-                    this.update_importing_message("<span style='color: green;'>" + 'Done! Please expect up to 30 minutes for your historical data to appear in Metrilo.' + "</span>");
+                    this.update_importing_message(
+                        "<span style='color: green;'>" +
+                        'Done! Please expect up to 30 minutes for your historical data to appear in Metrilo.' +
+                        "</span>"
+                    );
                     jQuery('#metrilo_button').removeClass('disabled').addClass('success').text('Finished Import.');
                 } else {
                     jQuery('#metrilo_button').text((`Importing ${next}`));
@@ -100,8 +104,10 @@
         <div style="float: left;">
             <h3>Importing your historical data</h3>
             <p>
-                This tool helps you sync all your categories, products, orders and customers to Metrilo and can take <strong>up to 20 minutes</strong> to complete. <br />
-                It will not affect your website's performance at all since it sends your orders to your Metrilo account in small chunks.  <br /><br />
+                This tool helps you sync all your categories, products, orders and customers to Metrilo
+                and can take <strong>up to 20 minutes</strong> to complete. <br />
+                It will not affect your website's performance at all since it sends your orders to your
+                Metrilo account in small chunks.  <br /><br />
                 Make sure to <strong>not close this page</strong> while importing. Coffee, maybe?
             </p>
         </div>

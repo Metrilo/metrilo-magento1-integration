@@ -17,12 +17,11 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
             if ($itemType == 'configurable' || $itemType == 'bundle') {
                 continue;
             }
-    
-            $orderItemSku = $orderItem->getData('sku');
-            $orderProducts[] = [
-                'productId' => $orderItemSku ? $orderItemSku : $orderItem->getProductId(),
-                'quantity'  => $orderItem->getQtyOrdered()
-            ];
+            
+            $orderItemId     = $orderItem->getProductId();
+            $parentItem      = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($orderItemId);
+            $orderItemSku    = $parentItem ? $orderItem->getData('sku') : $orderItemId;
+            $orderProducts[] = ['productId' => $orderItemSku, 'quantity'  => $orderItem->getQtyOrdered()];
         }
     
         $orderBillingData = $order->getBillingAddress();
@@ -51,7 +50,7 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
     
         return [
             'id'        => $order->getIncrementId(),
-            'createdAt' => strtotime($order->getCreatedAt()),
+            'createdAt' => strtotime($order->getCreatedAt()) * 1000,
             'email'     => $customerEmail,
             'amount'    => $order->getBaseGrandTotal() - $order->getTotalRefunded(),
             'coupons'   => $couponCode,

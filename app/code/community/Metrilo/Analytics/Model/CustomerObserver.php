@@ -115,8 +115,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
     
     private function getCustomerGroup($groupId)
     {
-        $group       = $this->_customerGroupModel->load($groupId)->getCustomerGroupCode();
-        $groupName[] = $group->getCode();
+        $groupName[] = $this->_customerGroupModel->load($groupId)->getCustomerGroupCode();
         return $groupName;
     }
 }

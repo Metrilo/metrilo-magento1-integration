@@ -24,7 +24,7 @@ class Metrilo_Analytics_Helper_DeletedProductSerializer extends Mage_Core_Helper
                     
                     if ($parentProduct) {
                         $productOptions[] = [
-                            'id'       => $itemSku ? $itemSku : $itemId,
+                            'id'       => $itemId,
                             'sku'      => $itemSku,
                             'name'     => $itemName,
                             'price'    => $parentProduct->getPrice(),

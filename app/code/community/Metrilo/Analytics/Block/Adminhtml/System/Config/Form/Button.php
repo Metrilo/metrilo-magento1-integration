@@ -29,7 +29,8 @@ class Metrilo_Analytics_Block_Adminhtml_System_Config_Form_Button extends Mage_A
      */
     public function getStoreId()
     {
-        return Mage::getModel('core/store')->load(Mage::app()->getRequest()->getParam('store'), 'code')->getId();
+        $storeId = Mage::getModel('core/store')->load(Mage::app()->getRequest()->getParam('store'), 'code')->getId();
+        return ($storeId) ? $storeId : (int)$this->getRequest()->getParam('store', 0);
     }
 
 

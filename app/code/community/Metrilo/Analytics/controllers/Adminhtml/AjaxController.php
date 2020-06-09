@@ -22,19 +22,6 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
         $this->_orderObject               = Mage::getModel('metrilo_analytics/orderData');
     }
     
-    private function _serializeRecords($records, $serializer)
-    {
-        $serializedData = [];
-        foreach($records as $record) {
-            $serializedRecord = $serializer->serialize($record);
-            if ($serializedRecord) {
-                $serializedData[] = $serializedRecord;
-            }
-        }
-        
-        return $serializedData;
-    }
-    
     public function indexAction()
     {
         $result            = array();
@@ -61,6 +48,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                     // (since all admin created accounts will have storeId value of 0). Also admin created accounts
                     // can be assigned to admin website witch makes it impossible for the account to login on
                     // the front-end but makes it possible to create orders for that account via admin :(
+                    Mage::log(json_encode(array('AjaxController customers: ' => $serializedCustomers)) . PHP_EOL, null, 'Import.log');
                     $result['success']   = $client->customerBatch($serializedCustomers);
                     break;
                 case 'categories':
@@ -68,6 +56,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                         $this->_categoryObject->getCategories($storeId, $chunkId),
                         Mage::helper('metrilo_analytics/categorySerializer')
                     );
+                    Mage::log(json_encode(array('AjaxController categories: ' => $serializedCategories)) . PHP_EOL, null, 'Import.log');
                     $result['success']    = $client->categoryBatch($serializedCategories);
                     break;
                 case 'deletedProducts':
@@ -80,6 +69,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                             Metrilo_Analytics_Helper_Data::CHUNK_ITEMS
                         );
                         foreach($deletedProductChunks as $chunk) {
+                            Mage::log(json_encode(array('AjaxController deletedProducts: ' => $chunk)) . PHP_EOL, null, 'Import.log');
                             $client->productBatch($chunk);
                         }
                     }
@@ -89,6 +79,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                         $this->_productObject->getProducts($storeId, $chunkId),
                         Mage::helper('metrilo_analytics/productSerializer')
                     );
+                    Mage::log(json_encode(array('AjaxController products: ' => $serializedProducts)) . PHP_EOL, null, 'Import.log');
                     $result['success'] = $client->productBatch($serializedProducts);
                     break;
                 case 'orders':
@@ -96,6 +87,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                         $this->_orderObject->getOrders($storeId, $chunkId),
                         Mage::helper('metrilo_analytics/orderSerializer')
                     );
+                    Mage::log(json_encode(array('AjaxController orders: ' => $serializedOrders)) . PHP_EOL, null, 'Import.log');
                     $result['success'] = $client->orderBatch($serializedOrders);
                     if ($chunkId == (int)$this->getRequest()->getParam('ordersChunks') - 1) {
                         $this->_activityHelper->createActivity($storeId, 'import_end');
@@ -110,5 +102,18 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
             $this->_helper->logError('AjaxController', $e);
         }
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+    }
+    
+    private function _serializeRecords($records, $serializer)
+    {
+        $serializedData = [];
+        foreach($records as $record) {
+            $serializedRecord = $serializer->serialize($record);
+            if ($serializedRecord) {
+                $serializedData[] = $serializedRecord;
+            }
+        }
+        
+        return $serializedData;
     }
 }

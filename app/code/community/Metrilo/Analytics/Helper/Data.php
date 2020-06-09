@@ -42,7 +42,6 @@ class Metrilo_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
     public function getActivityEndpoint()
     {
         $activityEndpoint = Mage::getStoreConfig('metrilo_analytics_settings/settings/activity_endpoint');
-        
         return ($activityEndpoint) ? $activityEndpoint : 'https://p.metrilo.com';
     }
     

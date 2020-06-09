@@ -6,7 +6,7 @@ class Metrilo_Analytics_Model_CustomerData extends Mage_Core_Model_Abstract
     public function getCustomers($storeId, $chunkId)
     {
         $metriloCustomers = [];
-        $customers        = $this->getCustomerQuery($storeId)->setPageSize($this->chunkItems)->setCurPage($chunkId + 1);
+        $customers        = $this->_getCustomerQuery($storeId)->setPageSize($this->chunkItems)->setCurPage($chunkId + 1);
     
         foreach ($customers as $customer) {
             $metriloCustomers[] = new Metrilo_Analytics_Helper_MetriloCustomer(
@@ -45,8 +45,7 @@ class Metrilo_Analytics_Model_CustomerData extends Mage_Core_Model_Abstract
     
     private function getCustomerGroup($groupId)
     {
-        $group       = Mage::getModel('customer/group')->load($groupId)->getCustomerGroupCode();
-        $groupName[] = $group->getCode();
+        $groupName[] = Mage::getModel('customer/group')->load($groupId)->getCustomerGroupCode();
         return $groupName;
     }
 }

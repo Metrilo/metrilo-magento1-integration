@@ -10,7 +10,6 @@ class Metrilo_Analytics_Api_Connection
      */
     public function post($url, $bodyArray = false, $hmacAuth = false)
     {
-        $encodedBody = $bodyArray ? json_encode($bodyArray) : '';
         $parsedUrl = parse_url($url);
         $headers = [
             'Content-Type: application/json',
@@ -25,7 +24,8 @@ class Metrilo_Analytics_Api_Connection
             unset($bodyArray['secret']);
             $headers[] = 'X-Digest: ' . hash_hmac('sha256', json_encode($bodyArray), $secret);
         }
-        
+    
+        $encodedBody = $bodyArray ? json_encode($bodyArray) : '';
         return $this->curlCall($url, $headers, $encodedBody);
     }
     
