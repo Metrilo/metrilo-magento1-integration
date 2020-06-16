@@ -18,10 +18,7 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
                 continue;
             }
             
-            $orderItemId     = $orderItem->getProductId();
-            $parentItem      = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($orderItemId);
-            $orderItemSku    = $parentItem ? $orderItem->getData('sku') : $orderItemId;
-            $orderProducts[] = ['productId' => $orderItemSku, 'quantity'  => $orderItem->getQtyOrdered()];
+            $orderProducts[] = ['productId' => $orderItem->getProductId(), 'quantity'  => (int)$orderItem->getQtyOrdered()];
         }
     
         $orderBillingData = $order->getBillingAddress();
@@ -47,7 +44,7 @@ class Metrilo_Analytics_Helper_OrderSerializer extends Mage_Core_Helper_Abstract
         } else {
             return false;
         }
-    
+        
         return [
             'id'        => $order->getIncrementId(),
             'createdAt' => strtotime($order->getCreatedAt()) * 1000,

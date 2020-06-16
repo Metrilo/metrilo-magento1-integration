@@ -15,11 +15,11 @@ class Metrilo_Analytics_Helper_ProductOptions extends Mage_Core_Helper_Abstract
         foreach ($childrenProducts as $childProduct) {
             $imageUrl = (!empty($childProduct->getImage())) ?
                 Mage::helper('metrilo_analytics/productImageUrl')->getProductImageUrl($childProduct->getImage()) : '';
-            $childProductSku          = $childProduct->getSku();
+            
             $childProductSpecialPrice = $childProduct->getSpecialPrice();
             $productOptions[] = [
-                'id'       => $childProductSku ? $childProductSku : $childProduct->getId(),
-                'sku'      => $childProductSku,
+                'id'       => $childProduct->getId(),
+                'sku'      => $childProduct->getSku(),
                 'name'     => $childProduct->getName(),
                 'price'    => $childProductSpecialPrice ? $childProductSpecialPrice : $childProduct->getPrice(),
                 'imageUrl' => $imageUrl
