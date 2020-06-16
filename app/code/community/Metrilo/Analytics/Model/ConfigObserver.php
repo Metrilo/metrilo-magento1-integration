@@ -24,4 +24,3 @@ class Metrilo_Analytics_Model_ConfigObserver extends Varien_Event_Observer
         
     }
 }
-

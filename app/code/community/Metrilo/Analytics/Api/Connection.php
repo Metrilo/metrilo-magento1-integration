@@ -6,6 +6,7 @@ class Metrilo_Analytics_Api_Connection
      *
      * @param String $url
      * @param Array $bodyArray
+     * @param Boolean $hmacAuth
      * @return void
      */
     public function post($url, $bodyArray = false, $hmacAuth = false)
