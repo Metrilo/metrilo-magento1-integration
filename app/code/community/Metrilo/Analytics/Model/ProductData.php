@@ -1,7 +1,7 @@
 <?php
 class Metrilo_Analytics_Model_ProductData extends Mage_Core_Model_Abstract
 {
-    public $chunkItems = Metrilo_Analytics_Helper_Data::CHUNK_ITEMS;
+    private $chunkItems = Metrilo_Analytics_Helper_Data::CHUNK_ITEMS;
     
     public function getProducts($storeId, $chunkId)
     {
@@ -20,7 +20,7 @@ class Metrilo_Analytics_Model_ProductData extends Mage_Core_Model_Abstract
         return Mage::getModel('catalog/product')
                         ->getCollection()
                         ->addStoreFilter($storeId)
-                        ->addFieldToFilter('visibility', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
+//                        ->addFieldToFilter('visibility', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
                         ->addAttributeToSelect([
                             'entity_id',
                             'type_id',
