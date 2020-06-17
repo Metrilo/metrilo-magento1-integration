@@ -60,9 +60,9 @@ class Metrilo_Analytics_Api_Connection
         
         curl_close($curl);
         
-        return array(
+        return [
             'response' => $response,
             'code' => $code
-        );
+        ];
     }
 }
