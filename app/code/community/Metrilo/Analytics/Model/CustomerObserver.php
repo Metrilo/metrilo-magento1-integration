@@ -7,6 +7,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
     private $_customerModel;
     private $_subscriberModel;
     private $_customerGroupModel;
+    private $_sessionEvents;
     
     public function _construct()
     {
@@ -15,6 +16,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
         $this->_customerModel      = Mage::getModel('customer/customer');
         $this->_subscriberModel    = Mage::getModel('newsletter/subscriber');
         $this->_customerGroupModel = Mage::getModel('customer/group');
+        $this->_sessionEvents      = Mage::helper('metrilo_analytics/sessionEvents');
     }
     
     public function customerUpdate($observer)
@@ -62,6 +64,12 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                     return $this->metriloCustomer($this->_customerModel->load($customerId));
                 } else {
                     $subscriberEmail = $subscriber->getEmail();
+                    $identifyCustomer = new Metrilo_Analytics_Helper_Events_IdentifyCustomer($subscriberEmail);
+                    $customEvent      = new Metrilo_Analytics_Helper_Events_CustomEvent('Subscribed');
+    
+                    $this->_sessionEvents->addSessionEvent($identifyCustomer->callJs());
+                    $this->_sessionEvents->addSessionEvent($customEvent->callJs());
+                    
                     return new Metrilo_Analytics_Helper_MetriloCustomer(
                         $subscriber->getStoreId(),
                         $subscriberEmail,
@@ -69,7 +77,7 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                         $subscriberEmail,
                         $subscriberEmail,
                         true,
-                        ['guest_customer']
+                        ['Newsletter']
                     );
                 }
                 
