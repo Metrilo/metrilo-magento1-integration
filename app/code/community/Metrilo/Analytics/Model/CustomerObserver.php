@@ -67,8 +67,8 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                     $identifyCustomer = new Metrilo_Analytics_Helper_Events_IdentifyCustomer($subscriberEmail);
                     $customEvent      = new Metrilo_Analytics_Helper_Events_CustomEvent('Subscribed');
     
-                    $this->sessionEvents->addSessionEvent($identifyCustomer->callJs());
-                    $this->sessionEvents->addSessionEvent($customEvent->callJs());
+                    $this->_sessionEvents->addSessionEvent($identifyCustomer->callJs());
+                    $this->_sessionEvents->addSessionEvent($customEvent->callJs());
                     
                     return new Metrilo_Analytics_Helper_MetriloCustomer(
                         $subscriber->getStoreId(),
