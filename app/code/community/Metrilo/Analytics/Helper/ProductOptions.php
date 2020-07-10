@@ -22,8 +22,7 @@ class Metrilo_Analytics_Helper_ProductOptions extends Mage_Core_Helper_Abstract
                 );
         } elseif ($productType == 'grouped') {
             $childrenProducts = $product->getTypeInstance()
-                ->getAssociatedProducts($product)
-                ->addAttributeToSelect(['name', 'price', 'image']);
+                ->getAssociatedProducts($product);
         }
         
         
