@@ -7,8 +7,9 @@ class Metrilo_Analytics_Helper_ProductSerializer extends Mage_Core_Helper_Abstra
         $productOptionsHelper  = Mage::helper('metrilo_analytics/productOptions');
         $productId             = $product->getId();
         $specialPrice          = $product->getSpecialPrice();
+        $productType           = $product->getTypeId();
         
-        if ($product->getTypeId() === 'simple' && $productOptionsHelper->getParentIds($productId) != []) {
+        if ($productType === 'simple' && $productOptionsHelper->getParentIds($productId, $productType) != []) {
             return;
         }
     
@@ -18,8 +19,8 @@ class Metrilo_Analytics_Helper_ProductSerializer extends Mage_Core_Helper_Abstra
         $price    = (!empty($product->getPrice())) ? $product->getPrice() : 0;
         $url      = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . $product->getUrlPath();
     
-        if ($product->isConfigurable()) {
-            $productOptions = $productOptionsHelper->getConfigurableOptions($product);
+        if ($productType === 'configurable' || $productType === 'bundle' || $productType === 'grouped') {
+            $productOptions = $productOptionsHelper->getParentOptions($product);
         } else {
             $productOptions = [];
         }
