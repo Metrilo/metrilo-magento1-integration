@@ -28,7 +28,11 @@ class Metrilo_Analytics_Model_ProductObserver extends Varien_Event_Observer
             }
             foreach ($productStoreIds as $storeId) {
                 $client         = Mage::helper('metrilo_analytics/apiClient')->getClient($storeId);
-                $productParents = Mage::helper('metrilo_analytics/productOptions')->getParentIds($product->getId());
+                $productParents = Mage::helper('metrilo_analytics/productOptions')
+                    ->getParentIds(
+                        $product->getId(),
+                        $product->getTypeId()
+                    );
                 $productsToSync = ($productParents) ? $productParents : [$product->getId()];
     
                 foreach ($productsToSync as $productId) {

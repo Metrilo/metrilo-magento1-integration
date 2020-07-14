@@ -1,16 +1,30 @@
 <?php
 class Metrilo_Analytics_Helper_ProductOptions extends Mage_Core_Helper_Abstract
 {
-    public function getConfigurableOptions($product)
+    public function getParentOptions($product)
     {
-        $productOptions = [];
+        $productOptions   = [];
+        $productType      = $product->getTypeId();
+        $childrenProducts = [];
     
-        //collection needs some refactoring to sync product data on store view level instead of default
+        if ($productType == 'configurable') {
+            //collection needs some refactoring to sync product data on store view level instead of default
         $childrenProducts = Mage::getModel('catalog/product_type_configurable')
             ->setProduct($product)
             ->getUsedProductCollection()
             ->addAttributeToSelect('*')
             ->addFilterByRequiredOptions();
+        } elseif ($productType == 'bundle') {
+            $childrenProducts = $product->getTypeInstance()
+                ->getSelectionsCollection(
+                    $product->getTypeInstance()->getOptionsIds($product),
+                    $product
+                );
+        } elseif ($productType == 'grouped') {
+            $childrenProducts = $product->getTypeInstance()
+                ->getAssociatedProducts($product);
+        }
+        
         
         foreach ($childrenProducts as $childProduct) {
             $imageUrl = (!empty($childProduct->getImage())) ?
@@ -29,8 +43,18 @@ class Metrilo_Analytics_Helper_ProductOptions extends Mage_Core_Helper_Abstract
         return $productOptions;
     }
     
-    public function getParentIds($productId)
+    public function getParentIds($productId, $productType)
     {
-        return Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($productId);
+        $parentIds = [];
+    
+        if ($productType === 'configurable') {
+            $parentIds = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($productId);
+        } elseif ($productType === 'bundle') {
+            $parentIds = Mage::getModel('bundle/product_type')->getParentIdsByChild($productId);
+        } elseif ($productType === 'grouped') {
+            $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($productId);
+        }
+    
+        return $parentIds;
     }
 }
