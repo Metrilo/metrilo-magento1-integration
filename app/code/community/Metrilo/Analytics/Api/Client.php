@@ -5,9 +5,10 @@ class Metrilo_Analytics_Api_Client
     private $_endpoint;
     private $_validator;
     
-    public function __construct($token, $platform, $pluginVersion, $apiEndpoint, $logPath)
+    public function __construct($token, $secret, $platform, $pluginVersion, $apiEndpoint, $logPath)
     {
         $this->_backendParams['token']         = $token;
+        $this->_backendParams['secret']        = $secret;
         $this->_backendParams['platform']      = $platform;
         $this->_backendParams['pluginVersion'] = $pluginVersion;
         $this->_endpoint                       = $apiEndpoint;
@@ -19,7 +20,7 @@ class Metrilo_Analytics_Api_Client
         $validCustomer = $this->_validator->validateCustomer($customer);
         
         if ($validCustomer) {
-            return $this->backendCall('/customer', ['params' => $customer]);
+            return $this->backendCall('/v2/customer', ['params' => $customer]);
         }
     }
     
@@ -28,7 +29,7 @@ class Metrilo_Analytics_Api_Client
         $validCustomers = $this->_validator->validateCustomers($customers);
         
         if (!empty($validCustomers)) {
-            return $this->backendCall('/customer/batch', ['batch' => $validCustomers]);
+            return $this->backendCall('/v2/customer/batch', ['batch' => $validCustomers]);
         }
     }
     
@@ -37,7 +38,7 @@ class Metrilo_Analytics_Api_Client
         $validCategory = $this->_validator->validateCategory($category);
         
         if ($validCategory) {
-            return $this->backendCall('/category', ['params' => $category]);
+            return $this->backendCall('/v2/category', ['params' => $category]);
         }
     }
     
@@ -46,7 +47,7 @@ class Metrilo_Analytics_Api_Client
         $validCategories = $this->_validator->validateCategories($categories);
         
         if (!empty($validCategories)) {
-            return $this->backendCall('/category/batch', ['batch' => $validCategories]);
+            return $this->backendCall('/v2/category/batch', ['batch' => $validCategories]);
         }
     }
     
@@ -55,7 +56,7 @@ class Metrilo_Analytics_Api_Client
         $validProduct = $this->_validator->validateProduct($product);
         
         if ($validProduct) {
-            return $this->backendCall('/product', ['params' => $product]);
+            return $this->backendCall('/v2/product', ['params' => $product]);
         }
     }
     
@@ -64,7 +65,7 @@ class Metrilo_Analytics_Api_Client
         $validProducts = $this->_validator->validateProducts($products);
         
         if (!empty($validProducts)) {
-            return $this->backendCall('/product/batch', ['batch' => $validProducts]);
+            return $this->backendCall('/v2/product/batch', ['batch' => $validProducts]);
         }
     }
     
@@ -73,7 +74,7 @@ class Metrilo_Analytics_Api_Client
         $validOrder = $this->_validator->validateOrder($order);
         
         if ($validOrder) {
-            return $this->backendCall('/order', ['params' => $order]);
+            return $this->backendCall('/v2/order', ['params' => $order]);
         }
     }
     
@@ -82,7 +83,7 @@ class Metrilo_Analytics_Api_Client
         $validOrders = $this->_validator->validateOrders($orders);
         
         if (!empty($validOrders)) {
-            return $this->backendCall('/order/batch', ['batch' => $validOrders]);
+            return $this->backendCall('/v2/order/batch', ['batch' => $validOrders]);
         }
     }
     
