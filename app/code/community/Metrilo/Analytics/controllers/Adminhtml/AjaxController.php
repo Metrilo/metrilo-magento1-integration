@@ -60,7 +60,7 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                 case 'deletedProducts':
                     $deletedProductOrders = $this->_deletedProductOrderObject->getDeletedProductOrders($storeId);
                     if ($deletedProductOrders) {
-                        $serializedDeletedProducts = Mage::helper('metrilo_analytics/deletedproductserializer')
+                        $serializedDeletedProducts = Mage::helper('metrilo_analytics/deletedProductSerializer')
                                                         ->serialize($deletedProductOrders);
                         $deletedProductChunks      = array_chunk(
                             $serializedDeletedProducts,
@@ -92,7 +92,6 @@ class Metrilo_Analytics_Adminhtml_AjaxController extends Mage_Adminhtml_Controll
                     $result['success'] = false;
                     break;
             }
-            $result['success'] = true;
         } catch (Exception $e) {
             $this->_helper->logError('AjaxController', $e);
         }
