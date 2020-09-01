@@ -4,11 +4,16 @@ class Metrilo_Analytics_Api_Client
     private $_backendParams;
     private $_endpoint;
     private $_validator;
+    private $_secret;
+    private $_customerPath = '/v2/customer';
+    private $_categoryPath = '/v2/category';
+    private $_productPath  = '/v2/product';
+    private $_orderPath    = '/v2/order';
     
     public function __construct($token, $secret, $platform, $pluginVersion, $apiEndpoint, $logPath)
     {
         $this->_backendParams['token']         = $token;
-        $this->_backendParams['secret']        = $secret;
+        $this->_secret                         = $secret;
         $this->_backendParams['platform']      = $platform;
         $this->_backendParams['pluginVersion'] = $pluginVersion;
         $this->_endpoint                       = $apiEndpoint;
@@ -20,7 +25,7 @@ class Metrilo_Analytics_Api_Client
         $validCustomer = $this->_validator->validateCustomer($customer);
         
         if ($validCustomer) {
-            return $this->backendCall('/v2/customer', ['params' => $customer]);
+            return $this->backendCall($this->_customerPath, ['params' => $customer]);
         }
     }
     
@@ -29,7 +34,7 @@ class Metrilo_Analytics_Api_Client
         $validCustomers = $this->_validator->validateCustomers($customers);
         
         if (!empty($validCustomers)) {
-            return $this->backendCall('/v2/customer/batch', ['batch' => $validCustomers]);
+            return $this->backendCall($this->_customerPath . '/batch', ['batch' => $validCustomers]);
         }
     }
     
@@ -38,7 +43,7 @@ class Metrilo_Analytics_Api_Client
         $validCategory = $this->_validator->validateCategory($category);
         
         if ($validCategory) {
-            return $this->backendCall('/v2/category', ['params' => $category]);
+            return $this->backendCall($this->_categoryPath, ['params' => $category]);
         }
     }
     
@@ -47,7 +52,7 @@ class Metrilo_Analytics_Api_Client
         $validCategories = $this->_validator->validateCategories($categories);
         
         if (!empty($validCategories)) {
-            return $this->backendCall('/v2/category/batch', ['batch' => $validCategories]);
+            return $this->backendCall($this->_categoryPath . '/batch', ['batch' => $validCategories]);
         }
     }
     
@@ -56,7 +61,7 @@ class Metrilo_Analytics_Api_Client
         $validProduct = $this->_validator->validateProduct($product);
         
         if ($validProduct) {
-            return $this->backendCall('/v2/product', ['params' => $product]);
+            return $this->backendCall($this->_productPath, ['params' => $product]);
         }
     }
     
@@ -65,7 +70,7 @@ class Metrilo_Analytics_Api_Client
         $validProducts = $this->_validator->validateProducts($products);
         
         if (!empty($validProducts)) {
-            return $this->backendCall('/v2/product/batch', ['batch' => $validProducts]);
+            return $this->backendCall($this->_productPath . '/batch', ['batch' => $validProducts]);
         }
     }
     
@@ -74,7 +79,7 @@ class Metrilo_Analytics_Api_Client
         $validOrder = $this->_validator->validateOrder($order);
         
         if ($validOrder) {
-            return $this->backendCall('/v2/order', ['params' => $order]);
+            return $this->backendCall($this->_orderPath, ['params' => $order]);
         }
     }
     
@@ -83,7 +88,7 @@ class Metrilo_Analytics_Api_Client
         $validOrders = $this->_validator->validateOrders($orders);
         
         if (!empty($validOrders)) {
-            return $this->backendCall('/v2/order/batch', ['batch' => $validOrders]);
+            return $this->backendCall($this->_orderPath . '/batch', ['batch' => $validOrders]);
         }
     }
     
@@ -100,6 +105,6 @@ class Metrilo_Analytics_Api_Client
         $this->_backendParams['time'] = round(microtime(true) * 1000);
         $body                         = array_merge($body, $this->_backendParams);
         
-        return $connection->post($this->_endpoint.$path, $body);
+        return $connection->post($this->_endpoint.$path, $body, $this->_secret);
     }
 }
