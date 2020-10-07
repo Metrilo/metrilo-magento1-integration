@@ -10,11 +10,13 @@ class Metrilo_Analytics_Helper_ApiClient extends Mage_Core_Helper_Abstract
         try {
             $edition        = (Mage::getVersion() < '1.7') ? '' : Mage::getEdition();
             $token          = $this->_helper->getApiToken($storeId);
+            $secret         = $this->_helper->getApiSecret($storeId);
             $platform       = 'Magento ' . $edition . ' ' . Mage::getVersion();
             $pluginVersion  = (string)Mage::getConfig()->getModuleConfig("Metrilo_Analytics")->version;
             $apiEndpoint    = $this->_helper->getApiEndpoint();
             return new Metrilo_Analytics_Api_Client(
                 $token,
+                $secret,
                 $platform,
                 $pluginVersion,
                 $apiEndpoint,
