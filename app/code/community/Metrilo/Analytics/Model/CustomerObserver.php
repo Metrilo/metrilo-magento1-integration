@@ -74,8 +74,8 @@ class Metrilo_Analytics_Model_CustomerObserver extends Varien_Event_Observer
                         $subscriber->getStoreId(),
                         $subscriberEmail,
                         strtotime($subscriber->getData('change_status_at')) * 1000,
-                        $subscriberEmail,
-                        $subscriberEmail,
+                        '',
+                        '',
                         true,
                         ['Newsletter']
                     );
