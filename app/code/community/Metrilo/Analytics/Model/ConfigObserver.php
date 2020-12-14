@@ -15,7 +15,7 @@ class Metrilo_Analytics_Model_ConfigObserver extends Varien_Event_Observer
         try {
             $storeId = $observer->getStore();
             if (!$this->_activityHelper->createActivity($storeId, 'integrated')) {
-                if ($storeId === 0) {
+                if ((int)$storeId === 0) {
                     Mage::getSingleton('core/session')->addError(
                         'You\'ve just entered the API token and API Secret to the default configuration scope .
                         This means that the Metrilo module will be added to all your store views .
