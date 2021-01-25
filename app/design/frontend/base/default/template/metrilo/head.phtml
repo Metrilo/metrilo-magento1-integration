@@ -1,6 +1,6 @@
 <?php $events = $this->getEvents(); ?>
 <?php $url    = $this->getLibraryUrl(); ?>
-<script type="text/javascript" src="<?php echo $url; ?>"></script>
+<script type="text/javascript" async="true" src="<?php echo $url; ?>"></script>
 <script type="text/javascript">
     <?php foreach ($events as $event) : ?>
     <?php echo $event; ?>
