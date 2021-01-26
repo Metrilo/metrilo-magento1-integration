@@ -1,8 +1,20 @@
 <?php $events = $this->getEvents(); ?>
 <?php $url    = $this->getLibraryUrl(); ?>
-<script type="text/javascript" src="<?php echo $url; ?>"></script>
+<script type="text/javascript" async="true" src="<?php echo $url; ?>"></script>
 <script type="text/javascript">
-    <?php foreach ($events as $event) : ?>
-    <?php echo $event; ?>
-    <?php endforeach; ?>
+    (function() {
+        const f = function () {
+            <?php
+            foreach($events as $event) {
+                echo $event;
+            }
+            ?>
+        };
+        if (typeof window.metrilo !== 'undefined') {
+            f();
+        } else {
+            window.metriloQueue = window.metriloQueue || [];
+            window.metriloQueue.push(f);
+        }
+    })();
 </script>
