@@ -11,13 +11,11 @@ class Metrilo_Analytics_Helper_Activity extends Mage_Core_Helper_Abstract
         
         try {
             $token     = $this->_helper->getApiToken($storeId);
-            $secret    = $this->_helper->getApiSecret($storeId);
             $endPoint  = $this->_helper->getActivityEndpoint();
             $client    = $this->_apiClient->getClient($storeId);
     
             $data = [
-                'type'   => $type,
-                'secret' => $secret
+                'type'   => $type
             ];
     
             $url = $endPoint . '/tracking/' . $token . '/activity';
